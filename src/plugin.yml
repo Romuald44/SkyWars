@@ -6,5 +6,5 @@ commands:
         description: Récupérer la vie
     list:
         description: Lister les joueurs
-    count:
-        description: Lancer la partie
+    meteo:
+        description: Donne la météo

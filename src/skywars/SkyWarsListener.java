@@ -35,6 +35,8 @@ import org.spigotmc.event.player.PlayerSpawnLocationEvent;
 public class SkyWarsListener implements Listener {
     
     ArrayList<Location> al = new ArrayList<Location>();
+    ArrayList tab = new ArrayList();
+    
     Location choice_class = new Location(Bukkit.getWorld("World"), 34, 101, -1);
     Location plateform = new Location(Bukkit.getWorld("World"), 21, 101, -55);
     int task;
@@ -69,13 +71,27 @@ public class SkyWarsListener implements Listener {
         int perso_ID = 0;
         al.add(new Location(Bukkit.getWorld("World"), 15, 102, -50));
         al.add(new Location(Bukkit.getWorld("World"), 27, 102, -50));
-
-        for(Player pls : Bukkit.getOnlinePlayers()) {
+        al.add(new Location(Bukkit.getWorld("World"), 40, 102, -50));
+        al.add(new Location(Bukkit.getWorld("World"), 27, 102, 10));
+        al.add(new Location(Bukkit.getWorld("World"), 30, 102, 20));
+        al.add(new Location(Bukkit.getWorld("World"), 50, 102, -30));
+        al.add(new Location(Bukkit.getWorld("World"), 10, 102, -10));
+        al.add(new Location(Bukkit.getWorld("World"), 5, 102, -40));
+        
+        int temp = (int)(8*Math.random());
+        while(tab.contains(temp) && perso_ID < 7) {
+            temp = (int)(8*Math.random());
+        }
+        perso_ID++;
+        p.sendMessage("Temp : "+temp);
+        tab.add(temp);
+        
+        /*for(Player pls : Bukkit.getOnlinePlayers()) {
             perso_ID++;
         }
-        p.sendMessage("nb : "+perso_ID);
+        p.sendMessage("nb : "+perso_ID);*/
         
-        return al.get(perso_ID-1);
+        return al.get(temp);
     }
     
     @EventHandler

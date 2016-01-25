@@ -39,6 +39,8 @@ public class SkyWarsListener implements Listener {
     
     Location choice_class = new Location(Bukkit.getWorld("World"), 34, 101, -1);
     Location plateform = new Location(Bukkit.getWorld("World"), 21, 101, -55);
+    int perso_ID;
+    int temp;
     int task;
     int seconds = 21;
     
@@ -68,30 +70,28 @@ public class SkyWarsListener implements Listener {
     //}
     
     public Location onPlace(Player p) {
-        int perso_ID = 0;
+        
         al.add(new Location(Bukkit.getWorld("World"), 15, 102, -50));
-        al.add(new Location(Bukkit.getWorld("World"), 27, 102, -50));
-        al.add(new Location(Bukkit.getWorld("World"), 40, 102, -50));
-        al.add(new Location(Bukkit.getWorld("World"), 27, 102, 10));
-        al.add(new Location(Bukkit.getWorld("World"), 30, 102, 20));
-        al.add(new Location(Bukkit.getWorld("World"), 50, 102, -30));
-        al.add(new Location(Bukkit.getWorld("World"), 10, 102, -10));
-        al.add(new Location(Bukkit.getWorld("World"), 5, 102, -40));
+        al.add(new Location(Bukkit.getWorld("World"), 16, 102, -50));
+        al.add(new Location(Bukkit.getWorld("World"), 17, 102, -50));
+        al.add(new Location(Bukkit.getWorld("World"), 18, 102, -50));
+        al.add(new Location(Bukkit.getWorld("World"), 19, 102, -50));
+        al.add(new Location(Bukkit.getWorld("World"), 20, 102, -50));
+        al.add(new Location(Bukkit.getWorld("World"), 21, 102, -50));
+        al.add(new Location(Bukkit.getWorld("World"), 22, 102, -50));
         
-        int temp = (int)(8*Math.random());
-        while(tab.contains(temp) && perso_ID < 7) {
+        if(perso_ID < 8) {
             temp = (int)(8*Math.random());
-        }
-        perso_ID++;
-        p.sendMessage("Temp : "+temp);
-        tab.add(temp);
-        
-        /*for(Player pls : Bukkit.getOnlinePlayers()) {
+            while(tab.contains(temp)) {
+                temp = (int)(8*Math.random());
+            }
             perso_ID++;
+            tab.add(temp);
+            return al.get(temp);
         }
-        p.sendMessage("nb : "+perso_ID);*/
-        
-        return al.get(temp);
+        else {
+            return null;
+        }
     }
     
     @EventHandler

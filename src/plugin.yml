@@ -4,7 +4,7 @@ version: 0.1
 commands:
     heal:
         description: Récupérer la vie
-    list:
-        description: Lister les joueurs
     meteo:
         description: Donne la météo
+    skybool:
+        description: Tp dans le skywars

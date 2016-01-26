@@ -18,14 +18,18 @@ import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.Location;
 import org.bukkit.Material;
+import org.bukkit.WorldCreator;
 import org.bukkit.enchantments.Enchantment;
 import org.bukkit.entity.ArmorStand;
+import org.bukkit.event.block.Action;
 import org.bukkit.event.player.PlayerCommandPreprocessEvent;
 import org.bukkit.event.player.PlayerInteractEvent;
 import org.bukkit.event.player.PlayerJoinEvent;
 import org.bukkit.event.player.PlayerMoveEvent;
 import org.bukkit.event.weather.WeatherChangeEvent;
 import org.bukkit.inventory.ItemStack;
+import org.bukkit.potion.PotionEffect;
+import org.bukkit.potion.PotionEffectType;
 import org.spigotmc.event.player.PlayerSpawnLocationEvent;
 
 /**
@@ -36,6 +40,8 @@ public class SkyWarsListener implements Listener {
     
     ArrayList<Location> al = new ArrayList<Location>();
     ArrayList tab = new ArrayList();
+    
+    WorldCreator w = new WorldCreator("SkyBool");
     
     Location choice_class = new Location(Bukkit.getWorld("World"), 34, 101, -1);
     Location plateform = new Location(Bukkit.getWorld("World"), 21, 101, -55);
@@ -52,7 +58,7 @@ public class SkyWarsListener implements Listener {
     
     @EventHandler
     public void onSpawnPlayer(PlayerSpawnLocationEvent e) {
-        e.setSpawnLocation(new Location(Bukkit.getWorld("World"), 0.5, 101, 0.5));
+        e.setSpawnLocation(new Location(Bukkit.getWorld("World"), 2.5, 101, -3.5));
     }
     
     /*@EventHandler
@@ -69,16 +75,27 @@ public class SkyWarsListener implements Listener {
         }*/
     //}
     
-    public Location onPlace(Player p) {
+    public Location onSpawnAlea(Player p) {
         
-        al.add(new Location(Bukkit.getWorld("World"), 15, 102, -50));
-        al.add(new Location(Bukkit.getWorld("World"), 16, 102, -50));
-        al.add(new Location(Bukkit.getWorld("World"), 17, 102, -50));
-        al.add(new Location(Bukkit.getWorld("World"), 18, 102, -50));
-        al.add(new Location(Bukkit.getWorld("World"), 19, 102, -50));
-        al.add(new Location(Bukkit.getWorld("World"), 20, 102, -50));
-        al.add(new Location(Bukkit.getWorld("World"), 21, 102, -50));
-        al.add(new Location(Bukkit.getWorld("World"), 22, 102, -50));
+        /*al.add(new Location(Bukkit.getWorld("World"), 1976, 70, 2038));
+        al.add(new Location(Bukkit.getWorld("World"), 1993, 68, 2022));
+        al.add(new Location(Bukkit.getWorld("World"), 1997, 60, 1973));
+        al.add(new Location(Bukkit.getWorld("World"), 2010, 63, 2009));
+        al.add(new Location(Bukkit.getWorld("World"), 2035, 71, 1981));
+        al.add(new Location(Bukkit.getWorld("World"), 2020, 65, 1990));
+        al.add(new Location(Bukkit.getWorld("World"), 2000, 69, 1965));
+        al.add(new Location(Bukkit.getWorld("World"), 2030, 75, 2002));*/
+        
+        /**** SKYWARS ****/
+        al.add(new Location(Bukkit.getWorld("SkyBool"), -165.5, 104, 294.5));
+        al.add(new Location(Bukkit.getWorld("SkyBool"), -151.5, 105, 329.5));
+        al.add(new Location(Bukkit.getWorld("SkyBool"), -115.5, 104, 344.5));
+        al.add(new Location(Bukkit.getWorld("SkyBool"), -79.5, 104, 330.5));
+        al.add(new Location(Bukkit.getWorld("SkyBool"), -65.5, 104, 294.5));
+        al.add(new Location(Bukkit.getWorld("SkyBool"), -79.5, 104, 258.5));
+        al.add(new Location(Bukkit.getWorld("SkyBool"), -115.5, 104, 244.5));
+        al.add(new Location(Bukkit.getWorld("SkyBool"), -150.5, 104, 258.5));
+        /* **** */
         
         if(perso_ID < 8) {
             temp = (int)(8*Math.random());
@@ -96,134 +113,139 @@ public class SkyWarsListener implements Listener {
     
     @EventHandler
     public void onPlayerClick(PlayerInteractEvent e) {
-        Player p = (Player)e.getPlayer();
-        //Entity test = (Player)e.getPlayer();
+        Player p = e.getPlayer();
+        Action action = e.getAction();
         
-        if(e.getClickedBlock().getType() == Material.LEVER //Départ en verre
-                && e.getClickedBlock().getX() == 27 
-                && e.getClickedBlock().getY() == 101 
-                && e.getClickedBlock().getZ() == -55-1) {
-            
-            /*Location start = onPlace(p);
-            p.teleport(start);*/
-            
-            for(Player pls : Bukkit.getOnlinePlayers()) {
-                sendTitle(pls, ChatColor.GREEN + "Map "+ ChatColor.BLUE + "Cité", "", 20, 50, 20);
-            }
-            
-            //p.getWorld().setTime(3000);
-                    
-            Countdown();
-            //p.setNoDamageTicks(25*20);
-        }
-        else if(e.getClickedBlock().getType() == Material.STONE_PLATE 
+        if(action == Action.PHYSICAL) {
+            if(e.getClickedBlock().getType() == Material.STONE_PLATE 
                 && e.getClickedBlock().getX() == 4 
                 && e.getClickedBlock().getY() == 101
                 && e.getClickedBlock().getZ() == 0) { //Vers Plateforme des classes
-            
-            p.teleport(choice_class);
+
+                p.teleport(choice_class);
+            }
+            else if((e.getClickedBlock().getType() == Material.WOOD_PLATE 
+                    && e.getClickedBlock().getX() == 26 
+                    && e.getClickedBlock().getY() == 101
+                    && e.getClickedBlock().getZ() == -5-1) ||
+                    (e.getClickedBlock().getType() == Material.WOOD_PLATE 
+                    && e.getClickedBlock().getX() == 26 
+                    && e.getClickedBlock().getY() == 101
+                    && e.getClickedBlock().getZ() == -6-1)) { //Stuff Tank
+
+                p.teleport(plateform);
+
+                /* ITEM */
+                stuffTank(p);
+                /* **** */
+
+                sendTitle(p, ChatColor.GREEN + "Classe "+ ChatColor.BLUE + "Tank", ChatColor.RED + "Prêt à recevoir ?", 20, 50, 20);
+            }
+            else if((e.getClickedBlock().getType() == Material.WOOD_PLATE 
+                    && e.getClickedBlock().getX() == 26 
+                    && e.getClickedBlock().getY() == 101
+                    && e.getClickedBlock().getZ() == -2-1) ||
+                    (e.getClickedBlock().getType() == Material.WOOD_PLATE 
+                    && e.getClickedBlock().getX() == 26 
+                    && e.getClickedBlock().getY() == 101
+                    && e.getClickedBlock().getZ() == -1-1)) { //Stuff Bourrin
+
+                p.teleport(plateform);
+
+                /* ITEM */
+                stuffBourrin(p);
+                /* **** */
+
+                sendTitle(p, ChatColor.GREEN + "Classe "+ ChatColor.BLUE + "Bourrin", ChatColor.RED + "Tape dans le fond chui pas ta mère !", 20, 50, 20);
+            }
+            else if((e.getClickedBlock().getType() == Material.WOOD_PLATE 
+                    && e.getClickedBlock().getX() == 26 
+                    && e.getClickedBlock().getY() == 101
+                    && e.getClickedBlock().getZ() == 1) ||
+                    (e.getClickedBlock().getType() == Material.WOOD_PLATE 
+                    && e.getClickedBlock().getX() == 26 
+                    && e.getClickedBlock().getY() == 101
+                    && e.getClickedBlock().getZ() == 2)) { //Stuff Archer
+
+                p.teleport(plateform);
+
+                /* ITEM */
+                stuffArcher(p);
+                /* **** */
+
+                sendTitle(p, ChatColor.GREEN + "Classe "+ ChatColor.BLUE + "Archer", ChatColor.RED + "Ca va gicler !", 20, 50, 20);
+            }
+            else if((e.getClickedBlock().getType() == Material.WOOD_PLATE 
+                    && e.getClickedBlock().getX() == 42 
+                    && e.getClickedBlock().getY() == 101
+                    && e.getClickedBlock().getZ() == 1) ||
+                    (e.getClickedBlock().getType() == Material.WOOD_PLATE 
+                    && e.getClickedBlock().getX() == 42 
+                    && e.getClickedBlock().getY() == 101
+                    && e.getClickedBlock().getZ() == 2)) { //Stuff Assassin
+
+                p.teleport(plateform);
+
+                /* ITEM */
+                stuffAssassin(p);
+                /* **** */
+
+                sendTitle(p, ChatColor.GREEN + "Classe "+ ChatColor.BLUE + "Assassin", ChatColor.RED + "Prendre par derrière ça fait mal", 20, 50, 20);
+            }
+            else if((e.getClickedBlock().getType() == Material.WOOD_PLATE 
+                    && e.getClickedBlock().getX() == 42 
+                    && e.getClickedBlock().getY() == 101
+                    && e.getClickedBlock().getZ() == -1-1) ||
+                    (e.getClickedBlock().getType() == Material.WOOD_PLATE 
+                    && e.getClickedBlock().getX() == 42 
+                    && e.getClickedBlock().getY() == 101
+                    && e.getClickedBlock().getZ() == -2-1)) { //Stuff Normal
+
+                p.teleport(plateform);
+
+                /* ITEM */
+                stuffNormal(p);
+                /* **** */
+
+                sendTitle(p, ChatColor.GREEN + "Classe "+ ChatColor.BLUE + "Normal", ChatColor.RED + "Pour des gens normaux... Ou presque !", 20, 50, 20);
+            }
+            else if((e.getClickedBlock().getType() == Material.WOOD_PLATE 
+                    && e.getClickedBlock().getX() == 42 
+                    && e.getClickedBlock().getY() == 101
+                    && e.getClickedBlock().getZ() == -6) ||
+                    (e.getClickedBlock().getType() == Material.WOOD_PLATE 
+                    && e.getClickedBlock().getX() == 42 
+                    && e.getClickedBlock().getY() == 101
+                    && e.getClickedBlock().getZ() == -7)) { //Stuff Popo
+
+                p.teleport(plateform);
+
+                /* ITEM */
+                stuffPopo(p);
+                /* **** */
+
+                sendTitle(p, ChatColor.GREEN + "Classe "+ ChatColor.BLUE + "Potions", ChatColor.RED + "J'ai glissé sur un truc gluant", 20, 50, 20);
+            }
         }
-        else if((e.getClickedBlock().getType() == Material.WOOD_PLATE 
-                && e.getClickedBlock().getX() == 26 
-                && e.getClickedBlock().getY() == 101
-                && e.getClickedBlock().getZ() == -5-1) ||
-                (e.getClickedBlock().getType() == Material.WOOD_PLATE 
-                && e.getClickedBlock().getX() == 26 
-                && e.getClickedBlock().getY() == 101
-                && e.getClickedBlock().getZ() == -6-1)) { //Stuff Tank
-            
-            p.teleport(plateform);
-            
-            /* ITEM */
-            stuffTank(p);
-            /* **** */
-            
-            sendTitle(p, ChatColor.GREEN + "Classe "+ ChatColor.BLUE + "Tank", ChatColor.RED + "Prêt à recevoir ?", 20, 50, 20);
-        }
-        else if((e.getClickedBlock().getType() == Material.WOOD_PLATE 
-                && e.getClickedBlock().getX() == 26 
-                && e.getClickedBlock().getY() == 101
-                && e.getClickedBlock().getZ() == -2-1) ||
-                (e.getClickedBlock().getType() == Material.WOOD_PLATE 
-                && e.getClickedBlock().getX() == 26 
-                && e.getClickedBlock().getY() == 101
-                && e.getClickedBlock().getZ() == -1-1)) { //Stuff Bourrin
-            
-            p.teleport(plateform);
-            
-            /* ITEM */
-            stuffBourrin(p);
-            /* **** */
-            
-            sendTitle(p, ChatColor.GREEN + "Classe "+ ChatColor.BLUE + "Bourrin", ChatColor.RED + "Tape dans le fond chui pas ta mère !", 20, 50, 20);
-        }
-        else if((e.getClickedBlock().getType() == Material.WOOD_PLATE 
-                && e.getClickedBlock().getX() == 26 
-                && e.getClickedBlock().getY() == 101
-                && e.getClickedBlock().getZ() == 1) ||
-                (e.getClickedBlock().getType() == Material.WOOD_PLATE 
-                && e.getClickedBlock().getX() == 26 
-                && e.getClickedBlock().getY() == 101
-                && e.getClickedBlock().getZ() == 2)) { //Stuff Archer
-            
-            p.teleport(plateform);
-            
-            /* ITEM */
-            stuffArcher(p);
-            /* **** */
-            
-            sendTitle(p, ChatColor.GREEN + "Classe "+ ChatColor.BLUE + "Archer", ChatColor.RED + "Ca va gicler !", 20, 50, 20);
-        }
-        else if((e.getClickedBlock().getType() == Material.WOOD_PLATE 
-                && e.getClickedBlock().getX() == 42 
-                && e.getClickedBlock().getY() == 101
-                && e.getClickedBlock().getZ() == 1) ||
-                (e.getClickedBlock().getType() == Material.WOOD_PLATE 
-                && e.getClickedBlock().getX() == 42 
-                && e.getClickedBlock().getY() == 101
-                && e.getClickedBlock().getZ() == 2)) { //Stuff Assassin
-            
-            p.teleport(plateform);
-            
-            /* ITEM */
-            stuffAssassin(p);
-            /* **** */
-            
-            sendTitle(p, ChatColor.GREEN + "Classe "+ ChatColor.BLUE + "Assassin", ChatColor.RED + "Prendre par derrière ça fait mal", 20, 50, 20);
-        }
-        else if((e.getClickedBlock().getType() == Material.WOOD_PLATE 
-                && e.getClickedBlock().getX() == 42 
-                && e.getClickedBlock().getY() == 101
-                && e.getClickedBlock().getZ() == -1-1) ||
-                (e.getClickedBlock().getType() == Material.WOOD_PLATE 
-                && e.getClickedBlock().getX() == 42 
-                && e.getClickedBlock().getY() == 101
-                && e.getClickedBlock().getZ() == -2-1)) { //Stuff Normal
-            
-            p.teleport(plateform);
-            
-            /* ITEM */
-            stuffNormal(p);
-            /* **** */
-            
-            sendTitle(p, ChatColor.GREEN + "Classe "+ ChatColor.BLUE + "Normal", ChatColor.RED + "Pour des gens normaux... Ou presque !", 20, 50, 20);
-        }
-        else if((e.getClickedBlock().getType() == Material.WOOD_PLATE 
-                && e.getClickedBlock().getX() == 42 
-                && e.getClickedBlock().getY() == 101
-                && e.getClickedBlock().getZ() == -6) ||
-                (e.getClickedBlock().getType() == Material.WOOD_PLATE 
-                && e.getClickedBlock().getX() == 42 
-                && e.getClickedBlock().getY() == 101
-                && e.getClickedBlock().getZ() == -7)) { //Stuff Normal
-            
-            p.teleport(plateform);
-            
-            /* ITEM */
-            stuffPopo(p);
-            /* **** */
-            
-            sendTitle(p, ChatColor.GREEN + "Classe "+ ChatColor.BLUE + "Potions", ChatColor.RED + "J'ai glissé sur un truc gluant", 20, 50, 20);
+        else if(action == Action.RIGHT_CLICK_BLOCK) {
+            if(e.getClickedBlock().getType() == Material.LEVER //Départ
+                && e.getClickedBlock().getX() == 27 
+                && e.getClickedBlock().getY() == 101 
+                && e.getClickedBlock().getZ() == -55-1) {
+
+                /*Location start = onPlace(p);
+                p.teleport(start);*/
+                w.createWorld();
+                for(Player pls : Bukkit.getOnlinePlayers()) {
+                    sendTitle(pls, ChatColor.GREEN + "Map "+ ChatColor.BLUE + "Cité", "", 20, 50, 20);
+                    pls.teleport(onSpawnAlea(pls));
+                }
+
+                //p.getWorld().setTime(3000);
+
+                //Countdown();
+                //p.setNoDamageTicks(25*20);
+            }
         }
     }
     
@@ -250,12 +272,12 @@ public class SkyWarsListener implements Listener {
             //p.sendTitle("Heal", "Récupération du total de vie");
             sendTitle(p, "Heal", ChatColor.RED + "Récupération du total de vie", 20, 80, 20);
         }
-        else if(e.getMessage().equalsIgnoreCase("/list")) {
-            /*Bukkit.broadcastMessage("Liste players = ");
-            for(Player pls : Bukkit.getOnlinePlayers()) {
-                Bukkit.broadcastMessage(pls.getPlayerListName());
-            }*/
-            p.teleport(onPlace(p));
+        else if(e.getMessage().equalsIgnoreCase("/skybool")) {
+            w.createWorld();
+            p.teleport(new Location(Bukkit.getWorld("SkyBool"), -110, 101, 297));//.getServer()
+        }
+        else if(e.getMessage().equalsIgnoreCase("/world")) {
+            p.teleport(new Location(Bukkit.getWorld("World"), 2.5, 101, -3.5));//.getServer()
         }
         else if(e.getMessage().equalsIgnoreCase("/meteo")) {
             p.sendMessage("Heure = "+test.getTime());
@@ -343,6 +365,15 @@ public class SkyWarsListener implements Listener {
         p.getInventory().clear();//Vider l'inventaire
         p.getInventory().addItem(new ItemStack[] { arc, fleche, sign });//Ajouter l'épée dans l'inventaire
         p.getInventory().setArmorContents(new ItemStack[] { boots, leggings, chestplate, helmet  });//Enfilé l'équipement sur le joueur
+        
+        p.removePotionEffect(PotionEffectType.ABSORPTION);
+        p.removePotionEffect(PotionEffectType.FIRE_RESISTANCE);
+        p.removePotionEffect(PotionEffectType.INVISIBILITY);
+        p.removePotionEffect(PotionEffectType.SPEED);
+        p.removePotionEffect(PotionEffectType.JUMP);
+        
+        p.addPotionEffect(new PotionEffect(PotionEffectType.SPEED, 18000, 0));
+        p.addPotionEffect(new PotionEffect(PotionEffectType.JUMP, 18000, 0));
         p.updateInventory();//Mettre à jour l'inventaire
     }
 
@@ -370,6 +401,15 @@ public class SkyWarsListener implements Listener {
         p.getInventory().clear();//Vider l'inventaire
         p.getInventory().addItem(new ItemStack[] { sword });//Ajouter l'épée dans l'inventaire
         p.getInventory().setArmorContents(new ItemStack[] { boots, leggings, chestplate, helmet });//Enfilé l'équipement sur le joueur
+        
+        p.removePotionEffect(PotionEffectType.ABSORPTION);
+        p.removePotionEffect(PotionEffectType.FIRE_RESISTANCE);
+        p.removePotionEffect(PotionEffectType.INVISIBILITY);
+        p.removePotionEffect(PotionEffectType.SPEED);
+        p.removePotionEffect(PotionEffectType.JUMP);
+        
+        p.addPotionEffect(new PotionEffect(PotionEffectType.SPEED, 18000, 0));
+        p.addPotionEffect(new PotionEffect(PotionEffectType.JUMP, 18000, 0));
         p.updateInventory();//Mettre à jour l'inventaire
     }
 
@@ -379,27 +419,32 @@ public class SkyWarsListener implements Listener {
         
         ItemStack dhelmet = new ItemStack(Material.DIAMOND_HELMET);
         dhelmet.addUnsafeEnchantment(Enchantment.PROTECTION_ENVIRONMENTAL, 2);
-        dhelmet.addUnsafeEnchantment(Enchantment.DURABILITY, 10);
         dhelmet.getItemMeta().spigot().setUnbreakable(true);
         
         ItemStack dchestplate = new ItemStack(Material.DIAMOND_CHESTPLATE);
         dchestplate.addUnsafeEnchantment(Enchantment.PROTECTION_ENVIRONMENTAL, 2);
-        dchestplate.addUnsafeEnchantment(Enchantment.DURABILITY, 10);
         dchestplate.getItemMeta().spigot().setUnbreakable(true);
         
         ItemStack dleggings = new ItemStack(Material.DIAMOND_LEGGINGS);
         dleggings.addUnsafeEnchantment(Enchantment.PROTECTION_ENVIRONMENTAL, 2);
-        dleggings.addUnsafeEnchantment(Enchantment.DURABILITY, 10);
         dleggings.getItemMeta().spigot().setUnbreakable(true);
         
         ItemStack dboots = new ItemStack(Material.DIAMOND_BOOTS);
         dboots.addUnsafeEnchantment(Enchantment.PROTECTION_ENVIRONMENTAL, 2);
-        dboots.addUnsafeEnchantment(Enchantment.DURABILITY, 10);
         dboots.getItemMeta().spigot().setUnbreakable(true);
         
         p.getInventory().clear();//Vider l'inventaire
         p.getInventory().addItem(new ItemStack[] { daxe });//Ajouter l'épée dans l'inventaire
         p.getInventory().setArmorContents(new ItemStack[] { dboots, dleggings, dchestplate, dhelmet });//Enfilé l'équipement sur le joueur
+        
+        p.removePotionEffect(PotionEffectType.ABSORPTION);
+        p.removePotionEffect(PotionEffectType.FIRE_RESISTANCE);
+        p.removePotionEffect(PotionEffectType.INVISIBILITY);
+        p.removePotionEffect(PotionEffectType.SPEED);
+        p.removePotionEffect(PotionEffectType.JUMP);
+        
+        p.addPotionEffect(new PotionEffect(PotionEffectType.SPEED, 18000, 0));
+        p.addPotionEffect(new PotionEffect(PotionEffectType.JUMP, 18000, 0));
         p.updateInventory();//Mettre à jour l'inventaire
     }
 
@@ -434,10 +479,21 @@ public class SkyWarsListener implements Listener {
         p.getInventory().clear();//Vider l'inventaire
         p.getInventory().addItem(new ItemStack[] { sword, arc, fleche });//Ajouter l'épée dans l'inventaire
         p.getInventory().setArmorContents(new ItemStack[] { boots, leggings, chestplate, helmet });//Enfilé l'équipement sur le joueur
+        
+        p.removePotionEffect(PotionEffectType.ABSORPTION);
+        p.removePotionEffect(PotionEffectType.FIRE_RESISTANCE);
+        p.removePotionEffect(PotionEffectType.INVISIBILITY);
+        p.removePotionEffect(PotionEffectType.SPEED);
+        p.removePotionEffect(PotionEffectType.JUMP);
+        
+        p.addPotionEffect(new PotionEffect(PotionEffectType.SPEED, 18000, 0));
+        p.addPotionEffect(new PotionEffect(PotionEffectType.JUMP, 18000, 0));
         p.updateInventory();//Mettre à jour l'inventaire
     }
 
     public void stuffAssassin(Player p) {
+        ItemStack armor = new ItemStack(Material.AIR);
+        
         ItemStack spade = new ItemStack(Material.DIAMOND_SPADE);
         spade.addUnsafeEnchantment(Enchantment.DAMAGE_ALL, 3);
         spade.addUnsafeEnchantment(Enchantment.KNOCKBACK, 1);
@@ -448,15 +504,40 @@ public class SkyWarsListener implements Listener {
 
         p.getInventory().clear();//Vider l'inventaire
         p.getInventory().addItem(new ItemStack[] { spade, briquet });//Ajouter l'épée dans l'inventaire
-        //p.getInventory().setArmorContents(new ItemStack[] {});//Enfilé l'équipement sur le joueur
+        p.getInventory().setArmorContents(new ItemStack[] { armor, armor, armor, armor });//Enfilé l'équipement sur le joueur
+        
+        p.removePotionEffect(PotionEffectType.ABSORPTION);
+        p.removePotionEffect(PotionEffectType.FIRE_RESISTANCE);
+        p.removePotionEffect(PotionEffectType.INVISIBILITY);
+        p.removePotionEffect(PotionEffectType.SPEED);
+        p.removePotionEffect(PotionEffectType.JUMP);
+        
+        p.addPotionEffect(new PotionEffect(PotionEffectType.FIRE_RESISTANCE, 18000, 0));
+        p.addPotionEffect(new PotionEffect(PotionEffectType.ABSORPTION, 18000, 0));
+        p.addPotionEffect(new PotionEffect(PotionEffectType.INVISIBILITY, 18000, 0));
+        p.addPotionEffect(new PotionEffect(PotionEffectType.SPEED, 18000, 0));
+        p.addPotionEffect(new PotionEffect(PotionEffectType.JUMP, 18000, 0));
         p.updateInventory();//Mettre à jour l'inventaire
     }
     
     public void stuffPopo(Player p) {
-        ItemStack potion = new ItemStack(Material.POTION, 1, (short) 8197);
+        ItemStack armor = new ItemStack(Material.AIR);
+        ItemStack poison = new ItemStack(Material.POTION, 1, (short) 16452);
+        ItemStack damage = new ItemStack(Material.POTION, 1, (short) 8196);
                 
         p.getInventory().clear();//Vider l'inventaire
-        p.getInventory().addItem(new ItemStack[] { potion });//Ajouter l'épée dans l'inventaire
+        p.getInventory().addItem(new ItemStack[] { poison, });//Ajouter l'épée dans l'inventaire
+        p.getInventory().setArmorContents(new ItemStack[] { armor, armor, armor, armor });//Enfilé l'équipement sur le joueur
+        
+        p.removePotionEffect(PotionEffectType.ABSORPTION);
+        p.removePotionEffect(PotionEffectType.FIRE_RESISTANCE);
+        p.removePotionEffect(PotionEffectType.INVISIBILITY);
+        p.removePotionEffect(PotionEffectType.SPEED);
+        p.removePotionEffect(PotionEffectType.JUMP);
+        
+        p.addPotionEffect(new PotionEffect(PotionEffectType.INVISIBILITY, 18000, 0));
+        p.addPotionEffect(new PotionEffect(PotionEffectType.SPEED, 18000, 0));
+        p.addPotionEffect(new PotionEffect(PotionEffectType.JUMP, 18000, 0));
         p.updateInventory();//Mettre à jour l'inventaire
     }
     

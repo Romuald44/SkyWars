@@ -4,7 +4,9 @@ version: 0.1
 commands:
     heal:
         description: Récupérer la vie
-    meteo:
-        description: Donne la météo
     skybool:
         description: Tp dans le skywars
+    hub:
+        description: Tp au loby
+    pvp:
+        description: Tp au choix de classe

@@ -43,7 +43,8 @@ public class SkyWarsListener implements Listener {
     
     WorldCreator w = new WorldCreator("SkyBool");
     
-    Location choice_class = new Location(Bukkit.getWorld("World"), 34, 101, -1);
+    Location spawn_start = new Location(Bukkit.getWorld("World"), 0.5, 101, 0.5);
+    Location choice_class = new Location(Bukkit.getWorld("World"), 500.5, 101, 500.5);
     Location plateform = new Location(Bukkit.getWorld("World"), 21, 101, -55);
     int perso_ID;
     int temp;
@@ -53,61 +54,59 @@ public class SkyWarsListener implements Listener {
     @EventHandler
     public void onPlayerJoin(PlayerJoinEvent e) {
         Player p = e.getPlayer();
+        //hologramme(p);
         sendTitle(p, ChatColor.GREEN + "Bienvenue", ChatColor.BLUE + p.getName(), 20, 50, 20);
     }
     
     @EventHandler
     public void onSpawnPlayer(PlayerSpawnLocationEvent e) {
-        e.setSpawnLocation(new Location(Bukkit.getWorld("World"), 2.5, 101, -3.5));
+        e.setSpawnLocation(spawn_start);
     }
     
-    /*@EventHandler
+    @EventHandler
     public void onPlayerMove(PlayerMoveEvent e) {
         Player p = e.getPlayer();
-        p.sendMessage("X : "+p.getLocation().getBlockX());
+        /*p.sendMessage("X : "+p.getLocation().getBlockX());
         p.sendMessage("Y : "+p.getLocation().getBlockY());
-        p.sendMessage("Z : "+p.getLocation().getBlockZ());
+        p.sendMessage("Z : "+p.getLocation().getBlockZ());*/
         
-       /* if(e.getFrom().getBlockX() == 82 && e.getFrom().getBlockY() == 72 && e.getFrom().getBlockZ() == 296) {
-            Location test = new Location(p.getWorld(), 80.5, 89, 307.5);
-            p.teleport(test);
-            sendTitle(p, ChatColor.GREEN + "Classe "+ ChatColor.BLUE + "Archer", ChatColor.RED + "Plaque de pression", 20, 100, 20);
-        }*/
-    //}
-    
-    public Location onSpawnAlea(Player p) {
-        
-        /*al.add(new Location(Bukkit.getWorld("World"), 1976, 70, 2038));
-        al.add(new Location(Bukkit.getWorld("World"), 1993, 68, 2022));
-        al.add(new Location(Bukkit.getWorld("World"), 1997, 60, 1973));
-        al.add(new Location(Bukkit.getWorld("World"), 2010, 63, 2009));
-        al.add(new Location(Bukkit.getWorld("World"), 2035, 71, 1981));
-        al.add(new Location(Bukkit.getWorld("World"), 2020, 65, 1990));
-        al.add(new Location(Bukkit.getWorld("World"), 2000, 69, 1965));
-        al.add(new Location(Bukkit.getWorld("World"), 2030, 75, 2002));*/
-        
-        /**** SKYWARS ****/
-        al.add(new Location(Bukkit.getWorld("SkyBool"), -165.5, 104, 294.5));
-        al.add(new Location(Bukkit.getWorld("SkyBool"), -151.5, 105, 329.5));
-        al.add(new Location(Bukkit.getWorld("SkyBool"), -115.5, 104, 344.5));
-        al.add(new Location(Bukkit.getWorld("SkyBool"), -79.5, 104, 330.5));
-        al.add(new Location(Bukkit.getWorld("SkyBool"), -65.5, 104, 294.5));
-        al.add(new Location(Bukkit.getWorld("SkyBool"), -79.5, 104, 258.5));
-        al.add(new Location(Bukkit.getWorld("SkyBool"), -115.5, 104, 244.5));
-        al.add(new Location(Bukkit.getWorld("SkyBool"), -150.5, 104, 258.5));
-        /* **** */
-        
-        if(perso_ID < 8) {
-            temp = (int)(8*Math.random());
-            while(tab.contains(temp)) {
-                temp = (int)(8*Math.random());
-            }
-            perso_ID++;
-            tab.add(temp);
-            return al.get(temp);
+        if((p.getLocation().getBlockX() == -12) &&
+           (p.getLocation().getBlockY() == 102) &&
+           (p.getLocation().getBlockZ() == 12)) {
+            p.teleport(choice_class);
+            sendTitle(p, ChatColor.GOLD + "Mode PVP", ChatColor.RED + "Choississez votre classe", 20, 50, 20);
         }
-        else {
-            return null;
+        else if((p.getLocation().getBlockX() == 501) &&
+           (p.getLocation().getBlockY() == 99) &&
+           (p.getLocation().getBlockZ() == 489) || (p.getLocation().getBlockX() == 500) &&
+           (p.getLocation().getBlockY() == 99) &&
+           (p.getLocation().getBlockZ() == 489) || (p.getLocation().getBlockX() == 499) &&
+           (p.getLocation().getBlockY() == 99) &&
+           (p.getLocation().getBlockZ() == 489)) {
+            
+            p.teleport(plateform);
+            stuffArcher(p);
+            sendTitle(p, ChatColor.GREEN + "Classe "+ ChatColor.BLUE + "Archer", ChatColor.RED + "Ca va gicler !", 20, 50, 20);
+        }
+        else if((p.getLocation().getBlockX() == 509) &&
+           (p.getLocation().getBlockY() == 99) &&
+           (p.getLocation().getBlockZ() == 491)) {
+            
+            p.teleport(plateform);
+            stuffBourrin(p);
+            sendTitle(p, ChatColor.GREEN + "Classe "+ ChatColor.BLUE + "Bourrin", ChatColor.RED + "Tape dans le fond chui pas ta mère !", 20, 50, 20);
+        }
+        else if((p.getLocation().getBlockX() == 511) &&
+           (p.getLocation().getBlockY() == 99) &&
+           (p.getLocation().getBlockZ() == 499) || (p.getLocation().getBlockX() == 511) &&
+           (p.getLocation().getBlockY() == 99) &&
+           (p.getLocation().getBlockZ() == 500) || (p.getLocation().getBlockX() == 511) &&
+           (p.getLocation().getBlockY() == 99) &&
+           (p.getLocation().getBlockZ() == 501)) {
+            
+            p.teleport(plateform);
+            stuffAssassin(p);
+            sendTitle(p, ChatColor.GREEN + "Classe "+ ChatColor.BLUE + "Assassin", ChatColor.RED + "Prendre par derrière ça fait mal", 20, 50, 20);
         }
     }
     
@@ -117,10 +116,18 @@ public class SkyWarsListener implements Listener {
         Action action = e.getAction();
         
         if(action == Action.PHYSICAL) {
-            if(e.getClickedBlock().getType() == Material.STONE_PLATE 
-                && e.getClickedBlock().getX() == 4 
-                && e.getClickedBlock().getY() == 101
-                && e.getClickedBlock().getZ() == 0) { //Vers Plateforme des classes
+            if((e.getClickedBlock().getType() == Material.SANDSTONE 
+                && e.getClickedBlock().getX() == -11 
+                && e.getClickedBlock().getY() == 102
+                && e.getClickedBlock().getZ() == -12) ||
+                (e.getClickedBlock().getType() == Material.SANDSTONE 
+                && e.getClickedBlock().getX() == -12 
+                && e.getClickedBlock().getY() == 102
+                && e.getClickedBlock().getZ() == -12) ||
+                (e.getClickedBlock().getType() == Material.SANDSTONE 
+                && e.getClickedBlock().getX() == -12 
+                && e.getClickedBlock().getY() == 102
+                && e.getClickedBlock().getZ() == -11)) { //Vers Plateforme des classes
 
                 p.teleport(choice_class);
             }
@@ -251,14 +258,22 @@ public class SkyWarsListener implements Listener {
     
     public void hologramme(Player p) {
         StringBuilder sb = new StringBuilder();
+        StringBuilder sb1 = new StringBuilder();
         
-        sb.append("Plateforme");
-        String name = sb.toString();
+        sb.append("PVP");
+        sb1.append("SkyWars");
+        String name_pvp = sb.toString();
+        String name_skw = sb1.toString();
         
-        ArmorStand as = Bukkit.getWorld(p.getWorld().getName()).spawn(p.getLocation(), ArmorStand.class);
-        as.setVisible(false);
-        as.setCustomName(name);
-        as.setCustomNameVisible(true);
+        ArmorStand pvp = Bukkit.getWorld(p.getWorld().getName()).spawn(new Location(Bukkit.getWorld("World"), -10.5, 102, 11.5), ArmorStand.class);
+        ArmorStand skw = Bukkit.getWorld(p.getWorld().getName()).spawn(new Location(Bukkit.getWorld("World"), -11.5, 102, -11.5), ArmorStand.class);
+        pvp.setVisible(false);
+        pvp.setCustomName(name_pvp);
+        pvp.setCustomNameVisible(true);
+        
+        skw.setVisible(false);
+        skw.setCustomName(name_skw);
+        skw.setCustomNameVisible(true);
     }
     
     @EventHandler
@@ -276,13 +291,11 @@ public class SkyWarsListener implements Listener {
             w.createWorld();
             p.teleport(new Location(Bukkit.getWorld("SkyBool"), -110, 101, 297));//.getServer()
         }
-        else if(e.getMessage().equalsIgnoreCase("/world")) {
-            p.teleport(new Location(Bukkit.getWorld("World"), 2.5, 101, -3.5));//.getServer()
+        else if(e.getMessage().equalsIgnoreCase("/hub")) {
+            p.teleport(spawn_start);//.getServer()
         }
-        else if(e.getMessage().equalsIgnoreCase("/meteo")) {
-            p.sendMessage("Heure = "+test.getTime());
-            p.sendMessage("Orage = "+test.hasStorm());
-            test.setTime(3000);
+        else if(e.getMessage().equalsIgnoreCase("/pvp")) {
+            p.teleport(choice_class);//.getServer()
         }
     }
     
@@ -544,6 +557,42 @@ public class SkyWarsListener implements Listener {
     public void starting() {
         Location first = new Location(Bukkit.getWorld("world"), 80.5, 76, 299.5);
         first.getBlock().breakNaturally();
+    }
+    
+    public Location onSpawnAlea(Player p) {
+        
+        /*al.add(new Location(Bukkit.getWorld("World"), 1976, 70, 2038));
+        al.add(new Location(Bukkit.getWorld("World"), 1993, 68, 2022));
+        al.add(new Location(Bukkit.getWorld("World"), 1997, 60, 1973));
+        al.add(new Location(Bukkit.getWorld("World"), 2010, 63, 2009));
+        al.add(new Location(Bukkit.getWorld("World"), 2035, 71, 1981));
+        al.add(new Location(Bukkit.getWorld("World"), 2020, 65, 1990));
+        al.add(new Location(Bukkit.getWorld("World"), 2000, 69, 1965));
+        al.add(new Location(Bukkit.getWorld("World"), 2030, 75, 2002));*/
+        
+        /**** SKYWARS ****/
+        al.add(new Location(Bukkit.getWorld("SkyBool"), -165.5, 104, 294.5));
+        al.add(new Location(Bukkit.getWorld("SkyBool"), -151.5, 105, 329.5));
+        al.add(new Location(Bukkit.getWorld("SkyBool"), -115.5, 104, 344.5));
+        al.add(new Location(Bukkit.getWorld("SkyBool"), -79.5, 104, 330.5));
+        al.add(new Location(Bukkit.getWorld("SkyBool"), -65.5, 104, 294.5));
+        al.add(new Location(Bukkit.getWorld("SkyBool"), -79.5, 104, 258.5));
+        al.add(new Location(Bukkit.getWorld("SkyBool"), -115.5, 104, 244.5));
+        al.add(new Location(Bukkit.getWorld("SkyBool"), -150.5, 104, 258.5));
+        /* **** */
+        
+        if(perso_ID < 8) {
+            temp = (int)(8*Math.random());
+            while(tab.contains(temp)) {
+                temp = (int)(8*Math.random());
+            }
+            perso_ID++;
+            tab.add(temp);
+            return al.get(temp);
+        }
+        else {
+            return null;
+        }
     }
     
     /*public void flag(Player p, Team t) {

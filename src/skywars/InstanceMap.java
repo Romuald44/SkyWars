@@ -11,11 +11,23 @@ import net.minecraft.server.v1_8_R3.PacketPlayOutTitle;
 import net.minecraft.server.v1_8_R3.PlayerConnection;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
+import org.bukkit.GameMode;
 import org.bukkit.Location;
+import org.bukkit.Material;
 import org.bukkit.World;
+import org.bukkit.block.Chest;
 import org.bukkit.craftbukkit.v1_8_R3.entity.CraftPlayer;
 import org.bukkit.entity.Player;
+import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
+import org.bukkit.event.entity.PlayerDeathEvent;
+import org.bukkit.inventory.Inventory;
+import org.bukkit.inventory.ItemStack;
+import org.bukkit.scoreboard.DisplaySlot;
+import org.bukkit.scoreboard.Objective;
+import org.bukkit.scoreboard.Score;
+import org.bukkit.scoreboard.Scoreboard;
+import org.bukkit.scoreboard.ScoreboardManager;
 
 /**
  *
@@ -25,13 +37,16 @@ public class InstanceMap implements Listener {
     
     ArrayList<Location> loc_start = new ArrayList<Location>();
     ArrayList tab_nb_temp = new ArrayList();
-    //ArrayList<String> players_sky = new ArrayList<String>();
     String[][] players_sky = new String[8][2];
     
     int perso_ID;
     int temp;
+    int winner;
+    int kill_total=0;
+    int player_total=1;
     int task;
     int seconds = 21;
+    String name_winner;
     private World instance_map;
     private int instance_players;
     
@@ -74,7 +89,72 @@ public class InstanceMap implements Listener {
             }
         }
         this.instance_players--;
-        //tab_nb_temp.remove(temp);
+    }
+    
+    @EventHandler
+    public void onPlayerDeath(PlayerDeathEvent e) {
+        
+        for(int i=0; i<8; i++) {
+            if(players_sky[i][0] == e.getEntity().getPlayer().getName()) {
+                this.players_sky[i][1] = "0";
+            }
+            if(players_sky[i][1] == "1") {
+                winner++;
+                name_winner = players_sky[i][0];
+            }
+        }
+        if(winner==1) {
+            sendTitle(Bukkit.getPlayer(name_winner), ChatColor.GOLD + "Winner", ChatColor.RED + "Tu leur a mis cher !", 20, 50, 20);
+            SkyWarsListener back = new SkyWarsListener();
+            
+            Bukkit.getScheduler().runTaskLater(Bukkit.getPluginManager().getPlugin("SkyWars"), new Runnable() {
+                @Override
+                public void run() {
+                    e.getEntity().getPlayer().setGameMode(GameMode.SURVIVAL);
+                    e.getEntity().getPlayer().teleport(new Location(Bukkit.getWorld("World"), -500.5, 101, -500.5));
+                    back.instance_skybool = new InstanceMap(Bukkit.getWorld("SkyBool"));
+                }
+            }, 200);
+        }
+        else {
+            e.getEntity().getPlayer().setGameMode(GameMode.SPECTATOR);
+        }
+        setScoreboard(e.getEntity().getPlayer());
+    }
+    
+    public void populateChest(Player p) {
+        Location loc = new Location(Bukkit.getWorld("World"), -74, 101, 329);
+        loc.getBlock().setType(Material.CHEST);
+	Chest chest = (Chest) loc.getBlock().getState();
+	Inventory inv = chest.getInventory();
+        inv.addItem(tab_stuff());
+    }
+    
+    public ItemStack[] tab_stuff() {
+        ItemStack[] alea = new ItemStack[26];
+        alea[0] = new ItemStack(Material.LEATHER_HELMET);
+        
+        return alea;
+    }
+    
+    public void setScoreboard(Player p) {
+        ScoreboardManager manager = Bukkit.getScoreboardManager();
+        Scoreboard board = manager.getNewScoreboard();
+        Objective objective = board.registerNewObjective("Liste", "Joueur");
+        objective.setDisplayName("Liste Joueurs");
+        objective.setDisplaySlot(DisplaySlot.SIDEBAR);
+        
+        for(int i=0; i<8; i++) {
+            if(players_sky[i][1] == "1") {
+                Score score = objective.getScore(ChatColor.GREEN+p.getName());
+                score.setScore(1);
+            }
+            else {
+                Score score = objective.getScore(ChatColor.RED+p.getName());
+                score.setScore(0);
+            }
+            p.setScoreboard(board);
+        }
     }
     
     public Location onSpawnAlea(Player p) {

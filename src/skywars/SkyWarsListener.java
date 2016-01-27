@@ -5,13 +5,11 @@
  */
 package skywars;
 
-import java.util.ArrayList;
 import net.minecraft.server.v1_8_R3.IChatBaseComponent;
 import net.minecraft.server.v1_8_R3.PacketPlayOutTitle;
 import net.minecraft.server.v1_8_R3.PlayerConnection;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
-import org.bukkit.GameMode;
 import org.bukkit.World;
 import org.bukkit.craftbukkit.v1_8_R3.entity.CraftPlayer;
 import org.bukkit.entity.Player;
@@ -20,12 +18,9 @@ import org.bukkit.event.Listener;
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.WorldCreator;
-import org.bukkit.block.Sign;
 import org.bukkit.enchantments.Enchantment;
 import org.bukkit.entity.ArmorStand;
 import org.bukkit.event.block.Action;
-import org.bukkit.event.block.SignChangeEvent;
-import org.bukkit.event.entity.PlayerDeathEvent;
 import org.bukkit.event.player.PlayerCommandPreprocessEvent;
 import org.bukkit.event.player.PlayerInteractEvent;
 import org.bukkit.event.player.PlayerJoinEvent;
@@ -34,11 +29,6 @@ import org.bukkit.event.weather.WeatherChangeEvent;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.potion.PotionEffect;
 import org.bukkit.potion.PotionEffectType;
-import org.bukkit.scoreboard.DisplaySlot;
-import org.bukkit.scoreboard.Objective;
-import org.bukkit.scoreboard.Score;
-import org.bukkit.scoreboard.Scoreboard;
-import org.bukkit.scoreboard.ScoreboardManager;
 import org.spigotmc.event.player.PlayerSpawnLocationEvent;
 
 /**
@@ -46,9 +36,6 @@ import org.spigotmc.event.player.PlayerSpawnLocationEvent;
  * @author Romuald
  */
 public class SkyWarsListener implements Listener {
-    
-    ArrayList tab = new ArrayList();
-    String[][] players_sky = new String[8][2];
     
     WorldCreator skybool = new WorldCreator("SkyBool");
     WorldCreator skybaal = new WorldCreator("SkyBaal");
@@ -59,22 +46,9 @@ public class SkyWarsListener implements Listener {
     Location choice_skywars = new Location(Bukkit.getWorld("World"), -500.5, 101, -500.5);
     Location plateform = new Location(Bukkit.getWorld("World"), 21, 101, -55);
     
-    int perso_ID;
-    int kill_total=0;
-    int player_total=1;
-    int temp;
-    
     @EventHandler
     public void onPlayerJoin(PlayerJoinEvent e) {
         Player p = e.getPlayer();
-        
-        int i=0;
-        for(Player pls : Bukkit.getOnlinePlayers()) {
-            players_sky[i][0]=pls.getName();
-            players_sky[i][1]="1";
-            i++;
-        }
-        
         sendTitle(p, ChatColor.GREEN + "Bienvenue", ChatColor.BLUE + p.getName(), 20, 50, 20);
     }
     
@@ -251,10 +225,8 @@ public class SkyWarsListener implements Listener {
                 && e.getClickedBlock().getY() == 101 
                 && e.getClickedBlock().getZ() == -495) {
                 
-                //skybool.createWorld();
-                skybaal.createWorld();
+                skybool.createWorld();
                 
-                //InstanceMap test2 = new InstanceMap(Bukkit.getWorld("SkyBaal"));
                 if(instance_skybool.getPlayers() <8) {
                     if(instance_skybool.getPlayers() >= 2) {
                         instance_skybool.Countdown();
@@ -293,59 +265,17 @@ public class SkyWarsListener implements Listener {
             p.teleport(new Location(Bukkit.getWorld("SkyBool"), -110, 101, 297));//.getServer()
         }
         else if(e.getMessage().equalsIgnoreCase("/hub")) {
-            p.teleport(spawn_start);//.getServer()
+            p.teleport(spawn_start);
             instance_skybool.removePlayers(p);
-            perso_ID--;
         }
         else if(e.getMessage().equalsIgnoreCase("/pvp")) {
-            p.teleport(choice_class);//.getServer()
+            p.teleport(choice_class);
+        }
+        else if(e.getMessage().equalsIgnoreCase("/skywars")) {
+            p.teleport(choice_skywars);
         }
         else if(e.getMessage().equalsIgnoreCase("/joueurs")) {
             instance_skybool.showPlayers();
-        }
-    }
-    
-    @EventHandler
-    public void onPlayerDeath(PlayerDeathEvent e) {
-        if(kill_total == player_total-1) {
-            sendTitle(e.getEntity().getPlayer(), ChatColor.GOLD + "Winner", ChatColor.RED + "Tu leur a mis cher !", 20, 50, 20);
-            e.getEntity().getPlayer().setGameMode(GameMode.SPECTATOR);
-            
-            Bukkit.getScheduler().runTaskLater(Bukkit.getPluginManager().getPlugin("SkyWars"), new Runnable() {
-                @Override
-                public void run() {
-                    player_total=0;
-                    e.getEntity().getPlayer().setGameMode(GameMode.SURVIVAL);
-                    e.getEntity().getPlayer().teleport(new Location(Bukkit.getWorld("World"), 21, 101, -55));
-                }
-            }, 200);
-        }
-        for(int i=0; i<players_sky.length; i++) {
-            if(players_sky[i][0].equals(e.getEntity().getName())) {
-                players_sky[i][1]="0";
-            } 
-        }
-        kill_total++;
-        setScoreboard(e.getEntity().getPlayer());
-    }
-    
-    public void setScoreboard(Player p) {
-        ScoreboardManager manager = Bukkit.getScoreboardManager();
-        Scoreboard board = manager.getNewScoreboard();
-        Objective objective = board.registerNewObjective("Liste", "Joueur");
-        objective.setDisplayName("Liste Joueurs");
-        objective.setDisplaySlot(DisplaySlot.SIDEBAR);
-        
-        for(Player pls : Bukkit.getOnlinePlayers()) {
-            if(pls == p) {
-                Score score = objective.getScore(ChatColor.RED+pls.getName());
-                score.setScore(0);
-            }
-            else {
-                Score score = objective.getScore(ChatColor.GREEN+pls.getName());
-                score.setScore(1);
-            }
-            pls.setScoreboard(board);
         }
     }
     

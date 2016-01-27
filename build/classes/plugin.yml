@@ -10,3 +10,7 @@ commands:
         description: Tp au loby
     pvp:
         description: Tp au choix de classe
+    skywars:
+        description: Tp au choix des skywars
+    joueurs:
+        description: Liste des joueurs dans l'instance

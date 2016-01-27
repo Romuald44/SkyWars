@@ -20,9 +20,11 @@ import org.bukkit.event.Listener;
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.WorldCreator;
+import org.bukkit.block.Sign;
 import org.bukkit.enchantments.Enchantment;
 import org.bukkit.entity.ArmorStand;
 import org.bukkit.event.block.Action;
+import org.bukkit.event.block.SignChangeEvent;
 import org.bukkit.event.entity.PlayerDeathEvent;
 import org.bukkit.event.player.PlayerCommandPreprocessEvent;
 import org.bukkit.event.player.PlayerInteractEvent;
@@ -45,28 +47,26 @@ import org.spigotmc.event.player.PlayerSpawnLocationEvent;
  */
 public class SkyWarsListener implements Listener {
     
-    ArrayList<Location> al = new ArrayList<Location>();
     ArrayList tab = new ArrayList();
     String[][] players_sky = new String[8][2];
     
-    WorldCreator w = new WorldCreator("SkyBool");
+    WorldCreator skybool = new WorldCreator("SkyBool");
+    WorldCreator skybaal = new WorldCreator("SkyBaal");
+    InstanceMap instance_skybool = new InstanceMap(Bukkit.getWorld("SkyBool"));
     
     Location spawn_start = new Location(Bukkit.getWorld("World"), 0.5, 101, 0.5);
     Location choice_class = new Location(Bukkit.getWorld("World"), 500.5, 101, 500.5);
+    Location choice_skywars = new Location(Bukkit.getWorld("World"), -500.5, 101, -500.5);
     Location plateform = new Location(Bukkit.getWorld("World"), 21, 101, -55);
+    
     int perso_ID;
     int kill_total=0;
     int player_total=1;
     int temp;
-    int task;
-    int seconds = 21;
     
     @EventHandler
     public void onPlayerJoin(PlayerJoinEvent e) {
         Player p = e.getPlayer();
-        
-        Joueurs test = new Joueurs(p.getName().toString());
-        p.sendMessage(test.getName());
         
         int i=0;
         for(Player pls : Bukkit.getOnlinePlayers()) {
@@ -92,9 +92,29 @@ public class SkyWarsListener implements Listener {
         
         if((p.getLocation().getBlockX() == -12) &&
            (p.getLocation().getBlockY() == 102) &&
+           (p.getLocation().getBlockZ() == 12) ||
+                (p.getLocation().getBlockX() == -12) &&
+           (p.getLocation().getBlockY() == 103) &&
+           (p.getLocation().getBlockZ() == 12) ||
+                (p.getLocation().getBlockX() == -12) &&
+           (p.getLocation().getBlockY() == 104) &&
            (p.getLocation().getBlockZ() == 12)) {
+            
             p.teleport(choice_class);
             sendTitle(p, ChatColor.GOLD + "Mode PVP", ChatColor.RED + "Choississez votre classe", 20, 50, 20);
+        }
+        if((p.getLocation().getBlockX() == -12) &&
+           (p.getLocation().getBlockY() == 102) &&
+           (p.getLocation().getBlockZ() == -12) ||
+                (p.getLocation().getBlockX() == -12) &&
+           (p.getLocation().getBlockY() == 103) &&
+           (p.getLocation().getBlockZ() == -12) ||
+                (p.getLocation().getBlockX() == -12) &&
+           (p.getLocation().getBlockY() == 104) &&
+           (p.getLocation().getBlockZ() == -12)) {
+            
+            p.teleport(choice_skywars);
+            sendTitle(p, ChatColor.GOLD + "Mode SkyWars", "", 20, 50, 20);
         }
         else if((p.getLocation().getBlockX() == 501) &&
            (p.getLocation().getBlockY() == 99) &&
@@ -102,6 +122,20 @@ public class SkyWarsListener implements Listener {
            (p.getLocation().getBlockY() == 99) &&
            (p.getLocation().getBlockZ() == 489) || (p.getLocation().getBlockX() == 499) &&
            (p.getLocation().getBlockY() == 99) &&
+           (p.getLocation().getBlockZ() == 489) ||
+                (p.getLocation().getBlockX() == 501) &&
+           (p.getLocation().getBlockY() == 100) &&
+           (p.getLocation().getBlockZ() == 489) || (p.getLocation().getBlockX() == 500) &&
+           (p.getLocation().getBlockY() == 100) &&
+           (p.getLocation().getBlockZ() == 489) || (p.getLocation().getBlockX() == 499) &&
+           (p.getLocation().getBlockY() == 100) &&
+           (p.getLocation().getBlockZ() == 489) ||
+                (p.getLocation().getBlockX() == 501) &&
+           (p.getLocation().getBlockY() == 101) &&
+           (p.getLocation().getBlockZ() == 489) || (p.getLocation().getBlockX() == 500) &&
+           (p.getLocation().getBlockY() == 101) &&
+           (p.getLocation().getBlockZ() == 489) || (p.getLocation().getBlockX() == 499) &&
+           (p.getLocation().getBlockY() == 101) &&
            (p.getLocation().getBlockZ() == 489)) {
             
             p.teleport(plateform);
@@ -110,6 +144,12 @@ public class SkyWarsListener implements Listener {
         }
         else if((p.getLocation().getBlockX() == 509) &&
            (p.getLocation().getBlockY() == 99) &&
+           (p.getLocation().getBlockZ() == 491) ||
+                (p.getLocation().getBlockX() == 509) &&
+           (p.getLocation().getBlockY() == 100) &&
+           (p.getLocation().getBlockZ() == 491) ||
+                (p.getLocation().getBlockX() == 509) &&
+           (p.getLocation().getBlockY() == 101) &&
            (p.getLocation().getBlockZ() == 491)) {
             
             p.teleport(plateform);
@@ -122,150 +162,126 @@ public class SkyWarsListener implements Listener {
            (p.getLocation().getBlockY() == 99) &&
            (p.getLocation().getBlockZ() == 500) || (p.getLocation().getBlockX() == 511) &&
            (p.getLocation().getBlockY() == 99) &&
+           (p.getLocation().getBlockZ() == 501) ||
+                (p.getLocation().getBlockX() == 511) &&
+           (p.getLocation().getBlockY() == 100) &&
+           (p.getLocation().getBlockZ() == 499) || (p.getLocation().getBlockX() == 511) &&
+           (p.getLocation().getBlockY() == 100) &&
+           (p.getLocation().getBlockZ() == 500) || (p.getLocation().getBlockX() == 511) &&
+           (p.getLocation().getBlockY() == 100) &&
+           (p.getLocation().getBlockZ() == 501) ||
+                (p.getLocation().getBlockX() == 511) &&
+           (p.getLocation().getBlockY() == 101) &&
+           (p.getLocation().getBlockZ() == 499) || (p.getLocation().getBlockX() == 511) &&
+           (p.getLocation().getBlockY() == 101) &&
+           (p.getLocation().getBlockZ() == 500) || (p.getLocation().getBlockX() == 511) &&
+           (p.getLocation().getBlockY() == 101) &&
            (p.getLocation().getBlockZ() == 501)) {
             
             p.teleport(plateform);
             stuffAssassin(p);
             sendTitle(p, ChatColor.GREEN + "Classe "+ ChatColor.BLUE + "Assassin", ChatColor.RED + "Prendre par derrière ça fait mal", 20, 50, 20);
         }
+        else if((p.getLocation().getBlockX() == 509) &&
+           (p.getLocation().getBlockY() == 99) &&
+           (p.getLocation().getBlockZ() == 509) ||
+                (p.getLocation().getBlockX() == 509) &&
+           (p.getLocation().getBlockY() == 100) &&
+           (p.getLocation().getBlockZ() == 509) ||
+                (p.getLocation().getBlockX() == 509) &&
+           (p.getLocation().getBlockY() == 101) &&
+           (p.getLocation().getBlockZ() == 509)) {
+            
+            p.teleport(plateform);
+            stuffTank(p);
+            sendTitle(p, ChatColor.GREEN + "Classe "+ ChatColor.BLUE + "Tank", ChatColor.RED + "Prêt à recevoir ?", 20, 50, 20);
+        }
+        else if((p.getLocation().getBlockX() == 489) &&
+           (p.getLocation().getBlockY() == 99) &&
+           (p.getLocation().getBlockZ() == 499) || (p.getLocation().getBlockX() == 489) &&
+           (p.getLocation().getBlockY() == 99) &&
+           (p.getLocation().getBlockZ() == 500) || (p.getLocation().getBlockX() == 489) &&
+           (p.getLocation().getBlockY() == 99) &&
+           (p.getLocation().getBlockZ() == 501) ||
+                (p.getLocation().getBlockX() == 489) &&
+           (p.getLocation().getBlockY() == 100) &&
+           (p.getLocation().getBlockZ() == 499) || (p.getLocation().getBlockX() == 489) &&
+           (p.getLocation().getBlockY() == 100) &&
+           (p.getLocation().getBlockZ() == 500) || (p.getLocation().getBlockX() == 489) &&
+           (p.getLocation().getBlockY() == 100) &&
+           (p.getLocation().getBlockZ() == 501) ||
+                (p.getLocation().getBlockX() == 489) &&
+           (p.getLocation().getBlockY() == 101) &&
+           (p.getLocation().getBlockZ() == 499) || (p.getLocation().getBlockX() == 489) &&
+           (p.getLocation().getBlockY() == 101) &&
+           (p.getLocation().getBlockZ() == 500) || (p.getLocation().getBlockX() == 489) &&
+           (p.getLocation().getBlockY() == 101) &&
+           (p.getLocation().getBlockZ() == 501)) {
+            
+            p.teleport(plateform);
+            stuffNormal(p);
+            sendTitle(p, ChatColor.GREEN + "Classe "+ ChatColor.BLUE + "Normal", ChatColor.RED + "Pour des gens normaux... Ou presque !", 20, 50, 20);
+        }
+        else if((p.getLocation().getBlockX() == 491) &&
+           (p.getLocation().getBlockY() == 99) &&
+           (p.getLocation().getBlockZ() == 491) ||
+                (p.getLocation().getBlockX() == 491) &&
+           (p.getLocation().getBlockY() == 100) &&
+           (p.getLocation().getBlockZ() == 491) ||
+                (p.getLocation().getBlockX() == 491) &&
+           (p.getLocation().getBlockY() == 101) &&
+           (p.getLocation().getBlockZ() == 491)) {
+            
+            p.teleport(plateform);
+            stuffPopo(p);
+            sendTitle(p, ChatColor.GREEN + "Classe "+ ChatColor.BLUE + "Potions", ChatColor.RED + "La drogue c mal ! mvoyez", 20, 50, 20);
+        }
     }
     
     @EventHandler
     public void onPlayerClick(PlayerInteractEvent e) {
         Player p = e.getPlayer();
-        Action action = e.getAction();
         
-        if(action == Action.PHYSICAL) {
-            if((e.getClickedBlock().getType() == Material.WOOD_PLATE 
-                    && e.getClickedBlock().getX() == 26 
-                    && e.getClickedBlock().getY() == 101
-                    && e.getClickedBlock().getZ() == -5-1) ||
-                    (e.getClickedBlock().getType() == Material.WOOD_PLATE 
-                    && e.getClickedBlock().getX() == 26 
-                    && e.getClickedBlock().getY() == 101
-                    && e.getClickedBlock().getZ() == -6-1)) { //Stuff Tank
-
-                p.teleport(plateform);
-
-                /* ITEM */
-                stuffTank(p);
-                /* **** */
-
-                sendTitle(p, ChatColor.GREEN + "Classe "+ ChatColor.BLUE + "Tank", ChatColor.RED + "Prêt à recevoir ?", 20, 50, 20);
-            }
-            else if((e.getClickedBlock().getType() == Material.WOOD_PLATE 
-                    && e.getClickedBlock().getX() == 26 
-                    && e.getClickedBlock().getY() == 101
-                    && e.getClickedBlock().getZ() == -2-1) ||
-                    (e.getClickedBlock().getType() == Material.WOOD_PLATE 
-                    && e.getClickedBlock().getX() == 26 
-                    && e.getClickedBlock().getY() == 101
-                    && e.getClickedBlock().getZ() == -1-1)) { //Stuff Bourrin
-
-                p.teleport(plateform);
-
-                /* ITEM */
-                stuffBourrin(p);
-                /* **** */
-
-                sendTitle(p, ChatColor.GREEN + "Classe "+ ChatColor.BLUE + "Bourrin", ChatColor.RED + "Tape dans le fond chui pas ta mère !", 20, 50, 20);
-            }
-            else if((e.getClickedBlock().getType() == Material.WOOD_PLATE 
-                    && e.getClickedBlock().getX() == 26 
-                    && e.getClickedBlock().getY() == 101
-                    && e.getClickedBlock().getZ() == 1) ||
-                    (e.getClickedBlock().getType() == Material.WOOD_PLATE 
-                    && e.getClickedBlock().getX() == 26 
-                    && e.getClickedBlock().getY() == 101
-                    && e.getClickedBlock().getZ() == 2)) { //Stuff Archer
-
-                p.teleport(plateform);
-
-                /* ITEM */
-                stuffArcher(p);
-                /* **** */
-
-                sendTitle(p, ChatColor.GREEN + "Classe "+ ChatColor.BLUE + "Archer", ChatColor.RED + "Ca va gicler !", 20, 50, 20);
-            }
-            else if((e.getClickedBlock().getType() == Material.WOOD_PLATE 
-                    && e.getClickedBlock().getX() == 42 
-                    && e.getClickedBlock().getY() == 101
-                    && e.getClickedBlock().getZ() == 1) ||
-                    (e.getClickedBlock().getType() == Material.WOOD_PLATE 
-                    && e.getClickedBlock().getX() == 42 
-                    && e.getClickedBlock().getY() == 101
-                    && e.getClickedBlock().getZ() == 2)) { //Stuff Assassin
-
-                p.teleport(plateform);
-
-                /* ITEM */
-                stuffAssassin(p);
-                /* **** */
-
-                sendTitle(p, ChatColor.GREEN + "Classe "+ ChatColor.BLUE + "Assassin", ChatColor.RED + "Prendre par derrière ça fait mal", 20, 50, 20);
-            }
-            else if((e.getClickedBlock().getType() == Material.WOOD_PLATE 
-                    && e.getClickedBlock().getX() == 42 
-                    && e.getClickedBlock().getY() == 101
-                    && e.getClickedBlock().getZ() == -1-1) ||
-                    (e.getClickedBlock().getType() == Material.WOOD_PLATE 
-                    && e.getClickedBlock().getX() == 42 
-                    && e.getClickedBlock().getY() == 101
-                    && e.getClickedBlock().getZ() == -2-1)) { //Stuff Normal
-
-                p.teleport(plateform);
-
-                /* ITEM */
-                stuffNormal(p);
-                /* **** */
-
-                sendTitle(p, ChatColor.GREEN + "Classe "+ ChatColor.BLUE + "Normal", ChatColor.RED + "Pour des gens normaux... Ou presque !", 20, 50, 20);
-            }
-            else if((e.getClickedBlock().getType() == Material.WOOD_PLATE 
-                    && e.getClickedBlock().getX() == 42 
-                    && e.getClickedBlock().getY() == 101
-                    && e.getClickedBlock().getZ() == -6) ||
-                    (e.getClickedBlock().getType() == Material.WOOD_PLATE 
-                    && e.getClickedBlock().getX() == 42 
-                    && e.getClickedBlock().getY() == 101
-                    && e.getClickedBlock().getZ() == -7)) { //Stuff Popo
-
-                p.teleport(plateform);
-
-                /* ITEM */
-                stuffPopo(p);
-                /* **** */
-
-                sendTitle(p, ChatColor.GREEN + "Classe "+ ChatColor.BLUE + "Potions", ChatColor.RED + "J'ai glissé sur un truc gluant", 20, 50, 20);
-            }
-        }
-        else if(action == Action.RIGHT_CLICK_BLOCK) {
-            if(e.getClickedBlock().getType() == Material.LEVER //Départ
-                && e.getClickedBlock().getX() == 27 
+        /*p.sendMessage("X : "+e.getClickedBlock().getX());
+        p.sendMessage("Y : "+e.getClickedBlock().getY());
+        p.sendMessage("Z : "+e.getClickedBlock().getZ());*/
+        
+        if(e.getAction().equals(Action.RIGHT_CLICK_BLOCK)) {
+            if(e.getClickedBlock().getX() == -500 
                 && e.getClickedBlock().getY() == 101 
-                && e.getClickedBlock().getZ() == -55-1) {
-
-                /*Location start = onPlace(p);
-                p.teleport(start);*/
-                w.createWorld();
-                for(Player pls : Bukkit.getOnlinePlayers()) {
-                    sendTitle(pls, ChatColor.GREEN + "Map "+ ChatColor.BLUE + "Cité", "", 20, 50, 20);
-                    pls.teleport(onSpawnAlea(pls));
+                && e.getClickedBlock().getZ() == -495) {
+                
+                //skybool.createWorld();
+                skybaal.createWorld();
+                
+                //InstanceMap test2 = new InstanceMap(Bukkit.getWorld("SkyBaal"));
+                if(instance_skybool.getPlayers() <8) {
+                    if(instance_skybool.getPlayers() >= 2) {
+                        instance_skybool.Countdown();
+                    }
+                    p.sendMessage(instance_skybool.getName());
+                    instance_skybool.addPlayers(p);
+                    p.sendMessage(""+instance_skybool.getPlayers());
+                    sendTitle(p, ChatColor.GREEN + "Map "+ ChatColor.BLUE + "Cité", "", 20, 50, 20);
+                    p.teleport(instance_skybool.onSpawnAlea(p));
                 }
-
-                //p.getWorld().setTime(3000);
-
-                //Countdown();
-                //p.setNoDamageTicks(25*20);
             }
         }
     }
+    
+    /*@EventHandler
+    public void onSignChange(SignChangeEvent e) {
+        if(e.getLine(0).equalsIgnoreCase("SkyBool")) {
+            e.setLine(0, ChatColor.RED+"SkyBool");
+            //e.setLine(1, "Ta gueule");
+        }
+    }*/
     
     @EventHandler
     public void onPlayerCommand(PlayerCommandPreprocessEvent e) {//On récupère la commande tapée par l'utilisateur
         
         Player p = e.getPlayer();// On récupère le joueur.
-        World test = p.getWorld();
+        World monde = p.getWorld();
 
         if(e.getMessage().equalsIgnoreCase("/heal")) {
             p.setHealth(20.0);
@@ -273,19 +289,19 @@ public class SkyWarsListener implements Listener {
             sendTitle(p, "Heal", ChatColor.RED + "Récupération du total de vie", 20, 80, 20);
         }
         else if(e.getMessage().equalsIgnoreCase("/skybool")) {
-            w.createWorld();
+            skybool.createWorld();
             p.teleport(new Location(Bukkit.getWorld("SkyBool"), -110, 101, 297));//.getServer()
         }
         else if(e.getMessage().equalsIgnoreCase("/hub")) {
             p.teleport(spawn_start);//.getServer()
+            instance_skybool.removePlayers(p);
+            perso_ID--;
         }
         else if(e.getMessage().equalsIgnoreCase("/pvp")) {
             p.teleport(choice_class);//.getServer()
         }
         else if(e.getMessage().equalsIgnoreCase("/joueurs")) {
-            for(int i=0; i<players_sky.length; i++) {
-                p.sendMessage("Joueur : "+players_sky[i][0]+" nb : "+players_sky[i][1]);
-            }
+            instance_skybool.showPlayers();
         }
     }
     
@@ -373,32 +389,6 @@ public class SkyWarsListener implements Listener {
             connection.sendPacket(timesPacket);
             connection.sendPacket(titlePacket);
             connection.sendPacket(subtitlePacket);
-    }
-    
-    public void Countdown() {
-        seconds = 21;
-        task = Bukkit.getScheduler().scheduleSyncRepeatingTask(Bukkit.getPluginManager().getPlugin("SkyWars"), new Runnable() {
-            
-            @Override
-            public void run() {
-                seconds--;
-                
-                if(seconds == 0) {
-                    Bukkit.getScheduler().cancelTask(task);
-                    for(Player pls : Bukkit.getOnlinePlayers()) {
-                        sendTitle(pls, ChatColor.RED + "GANG BANG !", "", 10, 20, 10);
-                    }
-                    starting();
-                }
-                if((seconds == 20) || (seconds > 0 && seconds <= 10)) {
-                    for(Player pls : Bukkit.getOnlinePlayers()) {
-                        sendTitle(pls, ChatColor.RED + Integer.toString(seconds), "", 10, 20, 10);
-                    }
-                    
-                    //Bukkit.broadcastMessage("Début de la partie dans "+ChatColor.RED+seconds+" secondes");
-                }
-            }
-        }, 20, 20);
     }
     
     public void stuffArcher(Player p) {
@@ -606,47 +596,6 @@ public class SkyWarsListener implements Listener {
         p.addPotionEffect(new PotionEffect(PotionEffectType.SPEED, 18000, 0));
         p.addPotionEffect(new PotionEffect(PotionEffectType.JUMP, 18000, 0));
         p.updateInventory();//Mettre à jour l'inventaire
-    }
-    
-    public void starting() {
-        Location first = new Location(Bukkit.getWorld("world"), 80.5, 76, 299.5);
-        first.getBlock().breakNaturally();
-    }
-    
-    public Location onSpawnAlea(Player p) {
-        
-        /*al.add(new Location(Bukkit.getWorld("World"), 1976, 70, 2038));
-        al.add(new Location(Bukkit.getWorld("World"), 1993, 68, 2022));
-        al.add(new Location(Bukkit.getWorld("World"), 1997, 60, 1973));
-        al.add(new Location(Bukkit.getWorld("World"), 2010, 63, 2009));
-        al.add(new Location(Bukkit.getWorld("World"), 2035, 71, 1981));
-        al.add(new Location(Bukkit.getWorld("World"), 2020, 65, 1990));
-        al.add(new Location(Bukkit.getWorld("World"), 2000, 69, 1965));
-        al.add(new Location(Bukkit.getWorld("World"), 2030, 75, 2002));*/
-        
-        /**** SKYWARS ****/
-        al.add(new Location(Bukkit.getWorld("SkyBool"), -165.5, 104, 294.5));
-        al.add(new Location(Bukkit.getWorld("SkyBool"), -151.5, 105, 329.5));
-        al.add(new Location(Bukkit.getWorld("SkyBool"), -115.5, 104, 344.5));
-        al.add(new Location(Bukkit.getWorld("SkyBool"), -79.5, 104, 330.5));
-        al.add(new Location(Bukkit.getWorld("SkyBool"), -65.5, 104, 294.5));
-        al.add(new Location(Bukkit.getWorld("SkyBool"), -79.5, 104, 258.5));
-        al.add(new Location(Bukkit.getWorld("SkyBool"), -115.5, 104, 244.5));
-        al.add(new Location(Bukkit.getWorld("SkyBool"), -150.5, 104, 258.5));
-        /* **** */
-        
-        if(perso_ID < 8) {
-            temp = (int)(8*Math.random());
-            while(tab.contains(temp)) {
-                temp = (int)(8*Math.random());
-            }
-            perso_ID++;
-            tab.add(temp);
-            return al.get(temp);
-        }
-        else {
-            return null;
-        }
     }
     
     /*public void flag(Player p, Team t) {

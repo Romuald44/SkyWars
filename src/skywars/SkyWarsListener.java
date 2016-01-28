@@ -10,6 +10,7 @@ import net.minecraft.server.v1_8_R3.PacketPlayOutTitle;
 import net.minecraft.server.v1_8_R3.PlayerConnection;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
+import org.bukkit.GameMode;
 import org.bukkit.World;
 import org.bukkit.craftbukkit.v1_8_R3.entity.CraftPlayer;
 import org.bukkit.entity.Player;
@@ -18,15 +19,20 @@ import org.bukkit.event.Listener;
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.WorldCreator;
+import org.bukkit.block.Sign;
 import org.bukkit.enchantments.Enchantment;
 import org.bukkit.entity.ArmorStand;
 import org.bukkit.event.block.Action;
+import org.bukkit.event.block.SignChangeEvent;
+import org.bukkit.event.entity.PlayerDeathEvent;
 import org.bukkit.event.player.PlayerCommandPreprocessEvent;
 import org.bukkit.event.player.PlayerInteractEvent;
 import org.bukkit.event.player.PlayerJoinEvent;
 import org.bukkit.event.player.PlayerMoveEvent;
+import org.bukkit.event.player.PlayerRespawnEvent;
 import org.bukkit.event.weather.WeatherChangeEvent;
 import org.bukkit.inventory.ItemStack;
+import org.bukkit.plugin.PluginManager;
 import org.bukkit.potion.PotionEffect;
 import org.bukkit.potion.PotionEffectType;
 import org.spigotmc.event.player.PlayerSpawnLocationEvent;
@@ -37,13 +43,13 @@ import org.spigotmc.event.player.PlayerSpawnLocationEvent;
  */
 public class SkyWarsListener implements Listener {
     
-    WorldCreator skybool = new WorldCreator("SkyBool");
-    WorldCreator skybaal = new WorldCreator("SkyBaal");
-    InstanceMap instance_skybool = new InstanceMap(Bukkit.getWorld("SkyBool"));
+    World skybool = new WorldCreator("SkyBool").createWorld();
+    World skybaal = new WorldCreator("SkyBaal").createWorld();
+    InstanceMap instance_skybool = new InstanceMap(skybool);
     
     Location spawn_start = new Location(Bukkit.getWorld("World"), 0.5, 101, 0.5);
     Location choice_class = new Location(Bukkit.getWorld("World"), 500.5, 101, 500.5);
-    Location choice_skywars = new Location(Bukkit.getWorld("World"), -500.5, 101, -500.5);
+    Location choice_skywars = new Location(Bukkit.getWorld("World"), -498.5, 103, -501.5);
     Location plateform = new Location(Bukkit.getWorld("World"), 21, 101, -55);
     
     @EventHandler
@@ -216,22 +222,24 @@ public class SkyWarsListener implements Listener {
     public void onPlayerClick(PlayerInteractEvent e) {
         Player p = e.getPlayer();
         
-        /*p.sendMessage("X : "+e.getClickedBlock().getX());
+        p.sendMessage("X : "+e.getClickedBlock().getX());
         p.sendMessage("Y : "+e.getClickedBlock().getY());
-        p.sendMessage("Z : "+e.getClickedBlock().getZ());*/
+        p.sendMessage("Z : "+e.getClickedBlock().getZ());
         
         if(e.getAction().equals(Action.RIGHT_CLICK_BLOCK)) {
-            if(e.getClickedBlock().getX() == -500 
-                && e.getClickedBlock().getY() == 101 
-                && e.getClickedBlock().getZ() == -495) {
+            if(e.getClickedBlock().getX() == -499 
+                && e.getClickedBlock().getY() == 103 
+                && e.getClickedBlock().getZ() == -499) {
                 
-                skybool.createWorld();
+                /*Listener sky = new SkyWarsListener();//On crée une instance de notre classe qui implémente Listener
+                PluginManager pm = Bukkit.getServer().getPluginManager();//On récupère le PluginManager du serveur
+                pm.registerEvents(sky, SkyWars);*/
                 
                 if(instance_skybool.getPlayers() <8) {
                     if(instance_skybool.getPlayers() >= 2) {
                         instance_skybool.Countdown();
                     }
-                    p.sendMessage(instance_skybool.getName());
+                    p.sendMessage(instance_skybool.getNameWorld());
                     instance_skybool.addPlayers(p);
                     p.sendMessage(""+instance_skybool.getPlayers());
                     sendTitle(p, ChatColor.GREEN + "Map "+ ChatColor.BLUE + "Cité", "", 20, 50, 20);
@@ -241,13 +249,54 @@ public class SkyWarsListener implements Listener {
         }
     }
     
-    /*@EventHandler
+    @EventHandler
+    public void onPlayerDeath(PlayerDeathEvent e) {
+        e.getEntity().getPlayer().setGameMode(GameMode.SPECTATOR);
+        
+        for(int i=0; i<8; i++) {
+            if(instance_skybool.players_sky[i][0].equals(e.getEntity().getPlayer().getName())) {
+                instance_skybool.players_sky[i][1] = "0";
+            }
+            if(instance_skybool.players_sky[i][1] == "1") {
+                instance_skybool.setWinner();
+                e.getEntity().getPlayer().sendMessage(""+instance_skybool.getWinner());
+                instance_skybool.setNameWinner(instance_skybool.players_sky[i][0]);
+            }
+        }
+    }
+    
+    @EventHandler
+    public void onRespawn(PlayerRespawnEvent e) {
+        
+        instance_skybool.setScoreboard(e.getPlayer());
+        
+        if(instance_skybool.getWinner()==1) {
+            sendTitle(Bukkit.getPlayer(instance_skybool.getNameWinner()), ChatColor.GOLD + "Winner", ChatColor.RED + "Tu leur a mis cher !", 20, 50, 20);
+            SkyWarsListener back = new SkyWarsListener();
+            
+            Bukkit.getScheduler().runTaskLater(Bukkit.getPluginManager().getPlugin("SkyWars"), new Runnable() {
+                @Override
+                public void run() {
+                    for(Player pls : Bukkit.getOnlinePlayers()) {
+                        pls.setGameMode(GameMode.SURVIVAL);
+                        pls.teleport(new Location(Bukkit.getWorld("World"), -500.5, 101, -500.5));
+                        instance_skybool.resetPlayers();
+                    }
+                    back.instance_skybool = new InstanceMap(Bukkit.getWorld("SkyBool"));
+                }
+            }, 200);
+        }
+        else {
+            e.setRespawnLocation(instance_skybool.loc_start.get((int)(8*Math.random())));
+        }
+    }
+    
+    @EventHandler
     public void onSignChange(SignChangeEvent e) {
         if(e.getLine(0).equalsIgnoreCase("SkyBool")) {
             e.setLine(0, ChatColor.RED+"SkyBool");
-            //e.setLine(1, "Ta gueule");
         }
-    }*/
+    }
     
     @EventHandler
     public void onPlayerCommand(PlayerCommandPreprocessEvent e) {//On récupère la commande tapée par l'utilisateur
@@ -261,7 +310,6 @@ public class SkyWarsListener implements Listener {
             sendTitle(p, "Heal", ChatColor.RED + "Récupération du total de vie", 20, 80, 20);
         }
         else if(e.getMessage().equalsIgnoreCase("/skybool")) {
-            skybool.createWorld();
             p.teleport(new Location(Bukkit.getWorld("SkyBool"), -110, 101, 297));//.getServer()
         }
         else if(e.getMessage().equalsIgnoreCase("/hub")) {
@@ -508,19 +556,39 @@ public class SkyWarsListener implements Listener {
     }
     
     public void stuffPopo(Player p) {
+        
+        ItemStack poison = new ItemStack(Material.POTION, 2, (short) 16452); //Poison 1:30
+        
+        ItemStack soin = new ItemStack(Material.POTION, 2, (short) 16421); //Soin Instant 2
+        
+        ItemStack jump = new ItemStack(Material.POTION, 1, (short) 16427); //Saut 2 1:07
+        
+        ItemStack speed = new ItemStack(Material.POTION, 2, (short) 16418); //Vitesse 2
+        
+        ItemStack lent = new ItemStack(Material.POTION, 1, (short) 16392); //Lenteur 2
+        
+        ItemStack damage = new ItemStack(Material.POTION, 1, (short) 16428); //Dommage 2
+        
+        ItemStack regen = new ItemStack(Material.POTION, 1, (short) 16417); //Regénération 2
+        
+        ItemStack spade = new ItemStack(Material.IRON_SPADE);
+        
         ItemStack armor = new ItemStack(Material.AIR);
-        ItemStack poison = new ItemStack(Material.POTION, 1, (short) 16452);
-        ItemStack damage = new ItemStack(Material.POTION, 1, (short) 8196);
-                
-        p.getInventory().clear();//Vider l'inventaire
-        p.getInventory().addItem(new ItemStack[] { poison, });//Ajouter l'épée dans l'inventaire
-        p.getInventory().setArmorContents(new ItemStack[] { armor, armor, armor, armor });//Enfilé l'équipement sur le joueur
+        
+        spade.addUnsafeEnchantment(Enchantment.DAMAGE_ALL, 3);
+        spade.addUnsafeEnchantment(Enchantment.KNOCKBACK, 1);
+        spade.getItemMeta().spigot().setUnbreakable(true);
         
         p.removePotionEffect(PotionEffectType.ABSORPTION);
         p.removePotionEffect(PotionEffectType.FIRE_RESISTANCE);
         p.removePotionEffect(PotionEffectType.INVISIBILITY);
         p.removePotionEffect(PotionEffectType.SPEED);
         p.removePotionEffect(PotionEffectType.JUMP);
+        
+        p.getInventory().clear();//Vider l'inventaire
+        
+        p.getInventory().addItem(new ItemStack[] { poison, soin, jump, speed, lent, damage, regen });//Ajouter l'épée dans l'inventaire
+        p.getInventory().setArmorContents(new ItemStack[] { armor, armor, armor, armor });//Enfilé l'équipement sur le joueur
         
         p.addPotionEffect(new PotionEffect(PotionEffectType.INVISIBILITY, 18000, 0));
         p.addPotionEffect(new PotionEffect(PotionEffectType.SPEED, 18000, 0));

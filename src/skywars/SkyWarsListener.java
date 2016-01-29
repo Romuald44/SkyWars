@@ -24,6 +24,8 @@ import org.bukkit.enchantments.Enchantment;
 import org.bukkit.entity.ArmorStand;
 import org.bukkit.event.block.Action;
 import org.bukkit.event.block.SignChangeEvent;
+import org.bukkit.event.entity.EntityDamageByEntityEvent;
+import org.bukkit.event.entity.EntityDamageEvent;
 import org.bukkit.event.entity.PlayerDeathEvent;
 import org.bukkit.event.player.PlayerCommandPreprocessEvent;
 import org.bukkit.event.player.PlayerInteractEvent;
@@ -61,6 +63,7 @@ public class SkyWarsListener implements Listener {
     @EventHandler
     public void onSpawnPlayer(PlayerSpawnLocationEvent e) {
         e.setSpawnLocation(spawn_start);
+        e.getPlayer().setGameMode(GameMode.SURVIVAL);
     }
     
     @EventHandler
@@ -229,7 +232,7 @@ public class SkyWarsListener implements Listener {
         if(e.getAction().equals(Action.RIGHT_CLICK_BLOCK)) {
             if(e.getClickedBlock().getX() == -499 
                 && e.getClickedBlock().getY() == 103 
-                && e.getClickedBlock().getZ() == -499) {
+                && e.getClickedBlock().getZ() == -500) {
                 
                 /*Listener sky = new SkyWarsListener();//On crée une instance de notre classe qui implémente Listener
                 PluginManager pm = Bukkit.getServer().getPluginManager();//On récupère le PluginManager du serveur
@@ -239,17 +242,22 @@ public class SkyWarsListener implements Listener {
                     if(instance_skybool.getPlayers() >= 2) {
                         instance_skybool.Countdown();
                     }
-                    p.sendMessage(instance_skybool.getNameWorld());
+                    
+                    p.setGameMode(GameMode.SURVIVAL);
+                    p.setHealth(20);
+                    p.setFoodLevel(20);
+                    instance_skybool.chestPopulate();
                     instance_skybool.addPlayers(p);
-                    p.sendMessage(""+instance_skybool.getPlayers());
-                    sendTitle(p, ChatColor.GREEN + "Map "+ ChatColor.BLUE + "Cité", "", 20, 50, 20);
+                    sendTitle(p, ChatColor.GREEN + "Map "+ ChatColor.BLUE + "SkyBool", "", 20, 50, 20);
                     p.teleport(instance_skybool.onSpawnAlea(p));
+                    
+                    onSignJoinable();
                 }
             }
         }
     }
     
-    @EventHandler
+    /*@EventHandler
     public void onPlayerDeath(PlayerDeathEvent e) {
         e.getEntity().getPlayer().setGameMode(GameMode.SPECTATOR);
         
@@ -259,42 +267,101 @@ public class SkyWarsListener implements Listener {
             }
             if(instance_skybool.players_sky[i][1] == "1") {
                 instance_skybool.setWinner();
-                e.getEntity().getPlayer().sendMessage(""+instance_skybool.getWinner());
+                //e.getEntity().getPlayer().sendMessage(""+instance_skybool.getWinner());
                 instance_skybool.setNameWinner(instance_skybool.players_sky[i][0]);
             }
         }
-    }
+    }*/
     
     @EventHandler
-    public void onRespawn(PlayerRespawnEvent e) {
-        
-        instance_skybool.setScoreboard(e.getPlayer());
-        
-        if(instance_skybool.getWinner()==1) {
-            sendTitle(Bukkit.getPlayer(instance_skybool.getNameWinner()), ChatColor.GOLD + "Winner", ChatColor.RED + "Tu leur a mis cher !", 20, 50, 20);
-            SkyWarsListener back = new SkyWarsListener();
-            
-            Bukkit.getScheduler().runTaskLater(Bukkit.getPluginManager().getPlugin("SkyWars"), new Runnable() {
-                @Override
-                public void run() {
-                    for(Player pls : Bukkit.getOnlinePlayers()) {
-                        pls.setGameMode(GameMode.SURVIVAL);
-                        pls.teleport(new Location(Bukkit.getWorld("World"), -500.5, 101, -500.5));
-                        instance_skybool.resetPlayers();
+    public void PlayerDamageReceive(EntityDamageEvent e) {
+        if(e.getEntity() instanceof Player) {
+            Player damaged = (Player) e.getEntity();
+             
+            //if(damaged.getWorld().getName() == "SkyBool") {
+                if((damaged.getHealth()-e.getDamage()) <= 0) {
+                    
+                    //Killed
+                    e.setCancelled(true);
+                    damaged.setGameMode(GameMode.SPECTATOR);
+                    damaged.teleport(instance_skybool.loc_start.get((int)(8*Math.random())));
+                    
+                    Bukkit.getScheduler().runTaskLater(Bukkit.getPluginManager().getPlugin("SkyWars"), new Runnable() {
+                            @Override
+                            public void run() {
+                                if(instance_skybool.getWinner()==1) {
+                                    sendTitle(Bukkit.getPlayer(instance_skybool.getNameWinner()), ChatColor.GOLD + "Winner", ChatColor.RED + "Tu leur a mis cher !", 20, 100, 20);
+                                    //SkyWarsListener back = new SkyWarsListener();
+
+                                    Bukkit.getScheduler().runTaskLater(Bukkit.getPluginManager().getPlugin("SkyWars"), new Runnable() {
+                                        @Override
+                                        public void run() {
+                                            for(Player pls : Bukkit.getOnlinePlayers()) {
+                                                pls.setGameMode(GameMode.SURVIVAL);
+                                                pls.setHealth(20);
+                                                pls.setFoodLevel(20);
+                                                pls.teleport(choice_skywars);
+                                                instance_skybool.resetPlayers();
+                                            }
+                                            //back.instance_skybool = new InstanceMap(Bukkit.getWorld("SkyBool"));
+                                        }
+                                    }, 150);
+                                }
+                            }
+                        }, 40);
+                    
+                    for(int i=0; i<8; i++) {
+                        if(instance_skybool.players_sky[i][0].equals(damaged.getPlayer().getName())) {
+                            instance_skybool.players_sky[i][1] = "0";
+                        }
+                        if(instance_skybool.players_sky[i][1] == "1") {
+                            instance_skybool.setWinner();
+                            instance_skybool.setNameWinner(instance_skybool.players_sky[i][0]);
+                        }
                     }
-                    back.instance_skybool = new InstanceMap(Bukkit.getWorld("SkyBool"));
+                    
+                    //GameOver(damaged);
+                    
+                    /*if(instance_skybool.getWinner()==1) {
+                        sendTitle(Bukkit.getPlayer(instance_skybool.getNameWinner()), ChatColor.GOLD + "Winner", ChatColor.RED + "Tu leur a mis cher !", 20, 50, 20);
+                        //SkyWarsListener back = new SkyWarsListener();
+
+                        Bukkit.getScheduler().runTaskLater(Bukkit.getPluginManager().getPlugin("SkyWars"), new Runnable() {
+                            @Override
+                            public void run() {
+                                for(Player pls : Bukkit.getOnlinePlayers()) {
+                                    pls.setGameMode(GameMode.SURVIVAL);
+                                    pls.teleport(choice_skywars);
+                                    instance_skybool.resetPlayers();
+                                }
+                                //back.instance_skybool = new InstanceMap(Bukkit.getWorld("SkyBool"));
+                            }
+                        }, 200);
+                    }*/
+                    
                 }
-            }, 200);
-        }
-        else {
-            e.setRespawnLocation(instance_skybool.loc_start.get((int)(8*Math.random())));
+            //}
         }
     }
     
-    @EventHandler
+    public void GameOver(Player p) {
+        p.sendMessage("ah que coucou");
+    }
+    
+    /*@EventHandler
     public void onSignChange(SignChangeEvent e) {
         if(e.getLine(0).equalsIgnoreCase("SkyBool")) {
             e.setLine(0, ChatColor.RED+"SkyBool");
+        }
+    }*/
+    
+    public void onSignJoinable() {
+        Location skybool = new Location(Bukkit.getWorld("World"), -499, 103, -500);
+        Sign s = (Sign) skybool.getBlock().getState();
+        
+        if(s.getLine(0).equalsIgnoreCase(ChatColor.RED+"SkyBool")) {
+            s.setLine(0, ChatColor.RED+"SkyBool");
+            s.setLine(1, ChatColor.GREEN+"1 / 8");//instance_skybool.getPlayers()
         }
     }
     

@@ -11,16 +11,13 @@ import net.minecraft.server.v1_8_R3.PacketPlayOutTitle;
 import net.minecraft.server.v1_8_R3.PlayerConnection;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
-import org.bukkit.GameMode;
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.World;
 import org.bukkit.block.Chest;
 import org.bukkit.craftbukkit.v1_8_R3.entity.CraftPlayer;
 import org.bukkit.entity.Player;
-import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
-import org.bukkit.event.entity.PlayerDeathEvent;
 import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.scoreboard.DisplaySlot;
@@ -41,22 +38,46 @@ public class InstanceMap implements Listener {
     
     int perso_ID;
     int temp;
-    int winner;
+    public int winner=0;
     int kill_total=0;
     int player_total=1;
     int task;
     int seconds = 21;
-    String name_winner;
+    public String name_winner;
     private World instance_map;
-    private int instance_players;
+    private int instance_players=0;
     
     public InstanceMap(World imap) {
         instance_map = imap;
         instance_map.setAutoSave(false);
     }
     
-    public String getName() {
+    public String getNameWorld() {
         return instance_map.getName();
+    }
+    
+    public int getWinner() {
+        return winner;
+    }
+    
+    public String getNameWinner() {
+        return name_winner;
+    }
+    
+    public void setNameWinner(String n_win) {
+        this.name_winner = n_win;
+    }
+    
+    public void setWinner() {
+        this.winner=0;
+        this.winner++;
+    }
+    
+    public void resetPlayers() {
+        for(int i=0; i<8; i++) {
+            players_sky[i][0]=null;
+            players_sky[i][1]=null;
+        }
     }
     
     public int getPlayers() {
@@ -78,6 +99,8 @@ public class InstanceMap implements Listener {
                 decl=false;
             }
         }
+        //chestPopulate();
+        //setScoreboard(p);
         this.instance_players++;
     }
     
@@ -88,51 +111,81 @@ public class InstanceMap implements Listener {
                 this.players_sky[i][1] = null;
             }
         }
+        //setScoreboard(p.getPlayer());
         this.instance_players--;
     }
     
-    @EventHandler
-    public void onPlayerDeath(PlayerDeathEvent e) {
+    public void chestPopulate() {
+        Location loc1 = new Location(Bukkit.getWorld("SkyBool"), -74, 101, 329);
+        //Location loc1_1 = new Location(Bukkit.getWorld("SkyBool"), -80, 101, 324);
         
-        for(int i=0; i<8; i++) {
-            if(players_sky[i][0] == e.getEntity().getPlayer().getName()) {
-                this.players_sky[i][1] = "0";
-            }
-            if(players_sky[i][1] == "1") {
-                winner++;
-                name_winner = players_sky[i][0];
-            }
-        }
-        if(winner==1) {
-            sendTitle(Bukkit.getPlayer(name_winner), ChatColor.GOLD + "Winner", ChatColor.RED + "Tu leur a mis cher !", 20, 50, 20);
-            SkyWarsListener back = new SkyWarsListener();
-            
-            Bukkit.getScheduler().runTaskLater(Bukkit.getPluginManager().getPlugin("SkyWars"), new Runnable() {
-                @Override
-                public void run() {
-                    e.getEntity().getPlayer().setGameMode(GameMode.SURVIVAL);
-                    e.getEntity().getPlayer().teleport(new Location(Bukkit.getWorld("World"), -500.5, 101, -500.5));
-                    back.instance_skybool = new InstanceMap(Bukkit.getWorld("SkyBool"));
-                }
-            }, 200);
-        }
-        else {
-            e.getEntity().getPlayer().setGameMode(GameMode.SPECTATOR);
-        }
-        setScoreboard(e.getEntity().getPlayer());
-    }
-    
-    public void populateChest(Player p) {
-        Location loc = new Location(Bukkit.getWorld("World"), -74, 101, 329);
-        loc.getBlock().setType(Material.CHEST);
-	Chest chest = (Chest) loc.getBlock().getState();
+        loc1.getBlock().setType(Material.CHEST);
+	Chest chest = (Chest) loc1.getBlock().getState();
 	Inventory inv = chest.getInventory();
-        inv.addItem(tab_stuff());
+        inv.addItem(aleaStuff());
     }
     
-    public ItemStack[] tab_stuff() {
+    public Material[] tab_stuff() {
+        Material[] alea = new Material[22];
+        alea[0] =  Material.LEATHER_HELMET;
+        alea[1] =  Material.LEATHER_CHESTPLATE;
+        alea[2] =  Material.LEATHER_LEGGINGS;
+        alea[3] =  Material.LEATHER_BOOTS;
+        
+        alea[4] =  Material.GOLD_HELMET;
+        alea[5] =  Material.GOLD_CHESTPLATE;
+        alea[6] =  Material.GOLD_LEGGINGS;
+        alea[7] =  Material.GOLD_BOOTS;
+        
+        alea[8] =  Material.CHAINMAIL_HELMET;
+        alea[9] =  Material.CHAINMAIL_CHESTPLATE;
+        alea[10] =  Material.CHAINMAIL_LEGGINGS;
+        alea[11] =  Material.CHAINMAIL_BOOTS;
+        
+        alea[12] =  Material.IRON_HELMET;
+        alea[13] =  Material.IRON_CHESTPLATE;
+        alea[14] =  Material.IRON_LEGGINGS;
+        alea[15] =  Material.IRON_BOOTS;
+        
+        alea[16] = Material.DIAMOND_HELMET;
+        alea[17] = Material.DIAMOND_CHESTPLATE;
+        alea[18] = Material.DIAMOND_LEGGINGS;
+        alea[19] = Material.DIAMOND_BOOTS;
+        
+        alea[20] = Material.STONE_SWORD;
+        alea[21] = Material.IRON_SWORD;
+        
+        return alea;
+    }
+    
+    public ItemStack[] aleaStuff() {
+        Material[] stuff = tab_stuff();
+        
+        ItemStack[] aleastuff = new ItemStack[3];
+        
+        for(int i=0; i<4; i++) {
+            aleastuff[i] = new ItemStack(stuff[(int)(21*Math.random())]);
+            Bukkit.getPlayer("EpicSaxGuy").sendMessage("Stuff : "+aleastuff[i].getType().name());
+        }
+        
+        return aleastuff;
+    }
+    
+    public ItemStack[] tab_magic() {
         ItemStack[] alea = new ItemStack[26];
-        alea[0] = new ItemStack(Material.LEATHER_HELMET);
+        alea[0] = new ItemStack(Material.GOLDEN_APPLE);
+        alea[1] = new ItemStack(Material.ARROW);
+        
+        return alea;
+    }
+    
+    public ItemStack[] tab_block() {
+        ItemStack[] alea = new ItemStack[26];
+        alea[0] = new ItemStack(Material.COBBLESTONE);
+        alea[1] = new ItemStack(Material.WOOD);
+        alea[2] = new ItemStack(Material.ICE);
+        alea[3] = new ItemStack(Material.GLASS);
+        alea[4] = new ItemStack(Material.FISHING_ROD);
         
         return alea;
     }
@@ -143,18 +196,24 @@ public class InstanceMap implements Listener {
         Objective objective = board.registerNewObjective("Liste", "Joueur");
         objective.setDisplayName("Liste Joueurs");
         objective.setDisplaySlot(DisplaySlot.SIDEBAR);
-        
+
         for(int i=0; i<8; i++) {
-            if(players_sky[i][1] == "1") {
-                Score score = objective.getScore(ChatColor.GREEN+p.getName());
-                score.setScore(1);
+            if(players_sky[i][0] != null) {
+                if(players_sky[i][1] == "1") {
+                    Score score = objective.getScore(ChatColor.GREEN+p.getName());
+                    score.setScore(1);
+                }
+                else {
+                    Score score = objective.getScore(ChatColor.RED+p.getName());
+                    score.setScore(0);
+                }
             }
-            else {
-                Score score = objective.getScore(ChatColor.RED+p.getName());
-                score.setScore(0);
-            }
-            p.setScoreboard(board);
         }
+        
+        for(Player online : Bukkit.getOnlinePlayers()){
+            online.setScoreboard(board);
+        }
+        
     }
     
     public Location onSpawnAlea(Player p) {

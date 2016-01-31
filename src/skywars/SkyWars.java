@@ -41,7 +41,7 @@ public class SkyWars extends JavaPlugin {
         //Message en vert
         console.sendMessage("§aSkyWars actif!");
         
-        Bukkit.getPluginManager().registerEvents((Listener)new Commands(), (Plugin)this);
+        this.getCommand("skywars").setExecutor(new Commands());
         Bukkit.getPluginManager().registerEvents((Listener)new SkyWarsListener(), (Plugin)this);
     }
     

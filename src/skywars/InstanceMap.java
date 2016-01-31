@@ -6,6 +6,11 @@
 package skywars;
 
 import java.util.ArrayList;
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.List;
+import java.util.NoSuchElementException;
+import java.util.Set;
 import net.minecraft.server.v1_8_R3.IChatBaseComponent;
 import net.minecraft.server.v1_8_R3.PacketPlayOutTitle;
 import net.minecraft.server.v1_8_R3.PlayerConnection;
@@ -24,7 +29,6 @@ import org.bukkit.scoreboard.DisplaySlot;
 import org.bukkit.scoreboard.Objective;
 import org.bukkit.scoreboard.Score;
 import org.bukkit.scoreboard.Scoreboard;
-import org.bukkit.scoreboard.ScoreboardManager;
 
 /**
  *
@@ -36,6 +40,15 @@ public class InstanceMap implements Listener {
     ArrayList tab_nb_temp = new ArrayList();
     String[][] players_sky = new String[8][2];
     
+    private Scoreboard sb = Bukkit.getScoreboardManager().getNewScoreboard();
+    private Scoreboard sbBuffer = Bukkit.getScoreboardManager().getNewScoreboard();
+    private Objective objective = sb.registerNewObjective("players", "dummy");
+    private Objective objectiveBuffer = sbBuffer.registerNewObjective("playerBuffer", "dummy");
+  
+    public HashMap<Player, Integer> scoreMap = new HashMap<>();
+    
+    ArrayList<Player> players = new ArrayList<Player>();
+   
     int perso_ID;
     int temp;
     public int winner=0;
@@ -49,7 +62,17 @@ public class InstanceMap implements Listener {
     
     public InstanceMap(World imap) {
         instance_map = imap;
-        instance_map.setAutoSave(false);
+        
+        imap.setAutoSave(false);
+        imap.setThundering(false);
+        imap.setStorm(false);
+        imap.setTicksPerAnimalSpawns(1);
+        imap.setTicksPerMonsterSpawns(1);
+        imap.setGameRuleValue("doMobSpawning", "false");
+        imap.setGameRuleValue("mobGriefing", "false");
+        imap.setGameRuleValue("doFireTick", "false");
+        
+        //chestPopulate();
     }
     
     public String getNameWorld() {
@@ -91,6 +114,8 @@ public class InstanceMap implements Listener {
     }
     
     public void addPlayers(Player p) {
+        players.add(p);
+        setScore(p, 1);
         boolean decl = true;
         for(int i=0; i<8; i++) {
             if(players_sky[i][0] == null && decl) {
@@ -99,19 +124,19 @@ public class InstanceMap implements Listener {
                 decl=false;
             }
         }
-        //chestPopulate();
-        //setScoreboard(p);
+        setBoard(p, players, "Liste Joueurs");
         this.instance_players++;
     }
     
     public void removePlayers(Player p) {
+        players.remove(p);
         for(int i=0; i<8; i++) {
             if(players_sky[i][0] == p.getName()) {
                 this.players_sky[i][0] = null;
                 this.players_sky[i][1] = null;
             }
         }
-        //setScoreboard(p.getPlayer());
+        setBoard(p, players, "Liste Joueurs");
         this.instance_players--;
     }
     
@@ -190,30 +215,54 @@ public class InstanceMap implements Listener {
         return alea;
     }
     
-    public void setScoreboard(Player p) {
-        ScoreboardManager manager = Bukkit.getScoreboardManager();
-        Scoreboard board = manager.getNewScoreboard();
-        Objective objective = board.registerNewObjective("Liste", "Joueur");
-        objective.setDisplayName("Liste Joueurs");
-        objective.setDisplaySlot(DisplaySlot.SIDEBAR);
+    public void setBoard(Player p, List<Player> playerList, String displayName){
+      objective.setDisplaySlot(DisplaySlot.SIDEBAR);
+      objective.setDisplayName(displayName);
+      p.setScoreboard(sb);
+      for(Player player : playerList){
+        player.setScoreboard(sb);
+      }
+    }
+  
+    public void setScore(Player p, int score){
+      Score s = objective.getScore(p.getName());
+      Score s2 = objectiveBuffer.getScore(p.getName());
+      int oldScore = scoreMap.containsKey(p) ? scoreMap.get(p) : 0;
+      scoreMap.put(p, oldScore + score);
 
-        for(int i=0; i<8; i++) {
-            if(players_sky[i][0] != null) {
-                if(players_sky[i][1] == "1") {
-                    Score score = objective.getScore(ChatColor.GREEN+p.getName());
-                    score.setScore(1);
-                }
-                else {
-                    Score score = objective.getScore(ChatColor.RED+p.getName());
-                    score.setScore(0);
-                }
-            }
+      s2.setScore(scoreMap.get(p));
+      removeLowestScore(objectiveBuffer, 1);
+      swap(objective, objectiveBuffer);
+
+      s.setScore(scoreMap.get(p));
+      removeLowestScore(objective, 1);
+      swap(objectiveBuffer, objective);
+    }
+  
+    public void swap(Objective ob1, Objective ob2){
+      ob2.setDisplayName(ob1.getDisplayName());
+      ob2.setDisplaySlot(ob1.getDisplaySlot());
+    }
+  
+    public void removeLowestScore(Objective objective, int maxScoreboardEntries){
+        if(objective.getScoreboard().getEntries().size() <= maxScoreboardEntries)
+          return;
+
+        int min = 0;
+        Set<String> player = objective.getScoreboard().getEntries();
+        List<Integer> scoreValue = new ArrayList<>();
+        List<String> scorePlayer = new ArrayList<>();
+        for(String p : player){
+          scorePlayer.add(objective.getScore(p).getEntry());
+          scoreValue.add(objective.getScore(p).getScore());
         }
-        
-        for(Player online : Bukkit.getOnlinePlayers()){
-            online.setScoreboard(board);
+        try{
+          min = scoreValue.indexOf(Collections.min(scoreValue));
+        } catch (NoSuchElementException nsee){
+          System.out.println("No such element!");
         }
-        
+
+        objective.getScoreboard().resetScores(scorePlayer.get(min));
     }
     
     public Location onSpawnAlea(Player p) {

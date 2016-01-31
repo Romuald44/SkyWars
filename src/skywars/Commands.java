@@ -25,7 +25,8 @@ public class Commands implements CommandExecutor {
         
         if(cmd.getName().equalsIgnoreCase("skywars") && sender instanceof Player) {
             if(args[0].equals("enter")) {
-                instance_skybool.addPlayers(p);
+                p.sendMessage("Ok pour la reception");
+                //instance_skybool.addPlayers(p);
             }
             else {
                 

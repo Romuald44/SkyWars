@@ -18,6 +18,7 @@ import org.bukkit.event.Listener;
 import org.bukkit.Location;
 import org.bukkit.entity.ArmorStand;
 import org.bukkit.event.entity.EntityDamageEvent;
+import org.bukkit.event.player.PlayerJoinEvent;
 import org.bukkit.event.weather.WeatherChangeEvent;
 
 /**
@@ -32,6 +33,13 @@ public class SkyWarsListener implements Listener {
     Location plateform = new Location(Bukkit.getWorld("World"), 21, 101, -55);
     
     InstanceMap instance_skybool;
+    
+    @EventHandler
+    public void onPlayerJoin(PlayerJoinEvent e) {
+        Player p = e.getPlayer();
+        p.sendMessage(ChatColor.RED+"SkyWars");
+        p.sendMessage("Développement par : "+ChatColor.GREEN+"EpicSaxGuy, MrTwixo, Guitou388");
+    }
     
     @EventHandler
     public void PlayerDamageReceive(EntityDamageEvent e) {

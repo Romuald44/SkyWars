@@ -1,16 +1,20 @@
 name: SkyWars
 main: skywars.SkyWars
 version: 0.1
+author: [EpicSaxGuy, MrTwixo, Guitou388]
 commands:
-    heal:
-        description: Récupérer la vie
+    skywars:
+      description: Commande principal
     skybool:
         description: Tp dans le skywars
-    hub:
-        description: Tp au loby
-    pvp:
-        description: Tp au choix de classe
-    skywars:
-        description: Tp au choix des skywars
     joueurs:
         description: Liste des joueurs dans l'instance
+permissions:
+  skywars.*:
+    description: Gives access to all swr commands
+    default: true
+    children:
+      swr.enter: true
+  skywars.enter:
+    description: Gives access to the swr join and quit commands
+    default: true

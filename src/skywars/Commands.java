@@ -19,6 +19,10 @@ public class Commands implements CommandExecutor {
     
     InstanceMap instance_skybool;
     
+    public Commands() {
+        instance_skybool = SkyWars.getIM();
+    }
+    
     @Override
     public boolean onCommand(CommandSender sender, Command cmd, String label, String[] args) {
         Player p = (Player) sender;
@@ -26,7 +30,7 @@ public class Commands implements CommandExecutor {
         if(cmd.getName().equalsIgnoreCase("skywars") && sender instanceof Player) {
             if(args[0].equals("enter")) {
                 p.sendMessage("Ok pour la reception");
-                //instance_skybool.addPlayers(p);
+                instance_skybool.addPlayers(p);
             }
             else {
                 

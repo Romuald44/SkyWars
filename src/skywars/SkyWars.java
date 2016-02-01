@@ -30,7 +30,7 @@ public class SkyWars extends JavaPlugin {
     WorldCreator wc = new WorldCreator("SkyBool");
 
     //WorldCreator cp_skybool = new WorldCreator("SkyBool").copy(skybool);
-    InstanceMap instance_skybool;
+    private InstanceMap instance_skybool;
     
     //Méthode d'activation
     @Override
@@ -42,7 +42,7 @@ public class SkyWars extends JavaPlugin {
         console.sendMessage("§aSkyWars actif!");
         
         this.getCommand("skywars").setExecutor(new Commands());
-        Bukkit.getPluginManager().registerEvents((Listener)new SkyWarsListener(), (Plugin)this);
+        Bukkit.getPluginManager().registerEvents((Listener)new PlayerListener(), (Plugin)this);
     }
     
     //Méthode de désactivation
@@ -50,5 +50,9 @@ public class SkyWars extends JavaPlugin {
     public void onDisable() {
         //Message en rouge
         console.sendMessage("§aSkyWars desactive");
+    }
+    
+    public static InstanceMap getIM() {
+        return instance.instance_skybool;
     }
 }

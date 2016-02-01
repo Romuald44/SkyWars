@@ -25,7 +25,7 @@ import org.bukkit.event.weather.WeatherChangeEvent;
  *
  * @author Romuald
  */
-public class SkyWarsListener implements Listener {
+public class PlayerListener implements Listener {
    
     Location spawn_start = new Location(Bukkit.getWorld("World"), 0.5, 101, 0.5);
     Location choice_class = new Location(Bukkit.getWorld("World"), 500.5, 101, 500.5);
@@ -33,6 +33,10 @@ public class SkyWarsListener implements Listener {
     Location plateform = new Location(Bukkit.getWorld("World"), 21, 101, -55);
     
     InstanceMap instance_skybool;
+    
+    public PlayerListener() {
+        instance_skybool = SkyWars.getIM();
+    }
     
     @EventHandler
     public void onPlayerJoin(PlayerJoinEvent e) {

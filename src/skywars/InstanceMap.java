@@ -72,6 +72,14 @@ public class InstanceMap implements Listener {
         imap.setGameRuleValue("mobGriefing", "false");
         imap.setGameRuleValue("doFireTick", "false");
         
+        loc_start.add(new Location(Bukkit.getWorld("SkyBool"), -165.5, 104, 294.5));
+        loc_start.add(new Location(Bukkit.getWorld("SkyBool"), -151.5, 105, 329.5));
+        loc_start.add(new Location(Bukkit.getWorld("SkyBool"), -115.5, 104, 344.5));
+        loc_start.add(new Location(Bukkit.getWorld("SkyBool"), -79.5, 104, 330.5));
+        loc_start.add(new Location(Bukkit.getWorld("SkyBool"), -65.5, 104, 294.5));
+        loc_start.add(new Location(Bukkit.getWorld("SkyBool"), -79.5, 104, 258.5));
+        loc_start.add(new Location(Bukkit.getWorld("SkyBool"), -115.5, 104, 244.5));
+        loc_start.add(new Location(Bukkit.getWorld("SkyBool"), -151.5, 104, 258.5));
         //chestPopulate();
     }
     
@@ -114,6 +122,7 @@ public class InstanceMap implements Listener {
     }
     
     public void addPlayers(Player p) {
+        p.teleport(onSpawnAlea(p));
         players.add(p);
         setScore(p, 1);
         boolean decl = true;
@@ -265,19 +274,11 @@ public class InstanceMap implements Listener {
         objective.getScoreboard().resetScores(scorePlayer.get(min));
     }
     
+    public Location locAlea() {
+        return loc_start.get((int)(8*Math.random()));
+    }
+    
     public Location onSpawnAlea(Player p) {
-        
-        /**** SKYWARS ****/
-        loc_start.add(new Location(Bukkit.getWorld("SkyBool"), -165.5, 104, 294.5));
-        loc_start.add(new Location(Bukkit.getWorld("SkyBool"), -151.5, 105, 329.5));
-        loc_start.add(new Location(Bukkit.getWorld("SkyBool"), -115.5, 104, 344.5));
-        loc_start.add(new Location(Bukkit.getWorld("SkyBool"), -79.5, 104, 330.5));
-        loc_start.add(new Location(Bukkit.getWorld("SkyBool"), -65.5, 104, 294.5));
-        loc_start.add(new Location(Bukkit.getWorld("SkyBool"), -79.5, 104, 258.5));
-        loc_start.add(new Location(Bukkit.getWorld("SkyBool"), -115.5, 104, 244.5));
-        loc_start.add(new Location(Bukkit.getWorld("SkyBool"), -151.5, 104, 258.5));
-        /* **** */
-        
         if(perso_ID < 8) {
             temp = (int)(8*Math.random());
             while(tab_nb_temp.contains(temp)) {

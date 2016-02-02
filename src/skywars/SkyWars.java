@@ -5,9 +5,10 @@
  */
 package skywars;
 
+import skywars.controller.WorldController;
+import skywars.listener.PlayerListener;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
-import org.bukkit.WorldCreator;
 import org.bukkit.command.ConsoleCommandSender;
 import org.bukkit.event.Listener;
 import org.bukkit.plugin.Plugin;
@@ -27,17 +28,20 @@ public class SkyWars extends JavaPlugin {
     private Location choice_skywars = new Location(Bukkit.getWorld("World"), -498.5, 103, -501.5);
     private Location plateform = new Location(Bukkit.getWorld("World"), 21, 101, -55);
     
-    WorldCreator wc = new WorldCreator("SkyBool");
-
+    //private static World wc = new WorldCreator("SkyBool").createWorld();
+    private static WorldController wc;
     //WorldCreator cp_skybool = new WorldCreator("SkyBool").copy(skybool);
-    private InstanceMap instance_skybool;
+    //private InstanceMap instance_skybool;
     
     //Méthode d'activation
     @Override
     public void onEnable() {
         instance = this;
+        wc = new WorldController();
+        wc.loadWorld("SkyBool");
+        Bukkit.broadcastMessage(""+Bukkit.getWorlds());
         //Bukkit.getServer().createWorld(wc);
-        instance_skybool = new InstanceMap(wc.createWorld());
+        //instance_skybool = new InstanceMap(wc);
         //Message en vert
         console.sendMessage("§aSkyWars actif!");
         
@@ -52,7 +56,15 @@ public class SkyWars extends JavaPlugin {
         console.sendMessage("§aSkyWars desactive");
     }
     
-    public static InstanceMap getIM() {
+    /*public static InstanceMap getIM() {
         return instance.instance_skybool;
+    }*/
+    
+    public static SkyWars get() {
+        return instance;
+    }
+    
+    public static WorldController getWC() {
+        return wc;
     }
 }

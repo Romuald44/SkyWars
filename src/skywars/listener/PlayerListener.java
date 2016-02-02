@@ -3,7 +3,7 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-package skywars;
+package skywars.listener;
 
 import net.minecraft.server.v1_8_R3.IChatBaseComponent;
 import net.minecraft.server.v1_8_R3.PacketPlayOutTitle;
@@ -20,6 +20,8 @@ import org.bukkit.entity.ArmorStand;
 import org.bukkit.event.entity.EntityDamageEvent;
 import org.bukkit.event.player.PlayerJoinEvent;
 import org.bukkit.event.weather.WeatherChangeEvent;
+import skywars.InstanceMap;
+import skywars.SkyWars;
 
 /**
  *
@@ -32,10 +34,10 @@ public class PlayerListener implements Listener {
     Location choice_skywars = new Location(Bukkit.getWorld("World"), -498.5, 103, -501.5);
     Location plateform = new Location(Bukkit.getWorld("World"), 21, 101, -55);
     
-    InstanceMap instance_skybool;
+    private static InstanceMap instance_skybool;
     
     public PlayerListener() {
-        instance_skybool = SkyWars.getIM();
+        //instance_skybool = SkyWars.getIM();
     }
     
     @EventHandler
@@ -45,7 +47,7 @@ public class PlayerListener implements Listener {
         p.sendMessage("Développement par : "+ChatColor.GREEN+"EpicSaxGuy, MrTwixo, Guitou388");
     }
     
-    @EventHandler
+    /*@EventHandler
     public void PlayerDamageReceive(EntityDamageEvent e) {
         if(e.getEntity() instanceof Player) {
             Player damaged = (Player) e.getEntity();
@@ -56,7 +58,7 @@ public class PlayerListener implements Listener {
                     //Killed
                     e.setCancelled(true);
                     damaged.setGameMode(GameMode.SPECTATOR);
-                    damaged.teleport(instance_skybool.loc_start.get((int)(8*Math.random())));
+                    damaged.teleport(instance_skybool.locAlea());
                     
                     Bukkit.getScheduler().runTaskLater(Bukkit.getPluginManager().getPlugin("SkyWars"), new Runnable() {
                             @Override
@@ -111,11 +113,11 @@ public class PlayerListener implements Listener {
                         }, 200);
                     }*/
                     
-                }
+                /*}
             }
         }
     }
-    
+    */
     
     public void GameOver(Player p) {
         p.sendMessage("ah que coucou");

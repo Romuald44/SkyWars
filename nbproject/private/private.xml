@@ -3,10 +3,11 @@
     <editor-bookmarks xmlns="http://www.netbeans.org/ns/editor-bookmarks/2" lastBookmarkId="0"/>
     <open-files xmlns="http://www.netbeans.org/ns/projectui-open-files/2">
         <group>
-            <file>file:/C:/Users/Romuald/Desktop/SkyWars/src/skywars/PlayerListener.java</file>
+            <file>file:/C:/Users/Romuald/Desktop/SkyWars/src/skywars/controller/WorldController.java</file>
             <file>file:/C:/Users/Romuald/Desktop/SkyWars/src/skywars/Commands.java</file>
             <file>file:/C:/Users/Romuald/Desktop/SkyWars/src/skywars/SkyWars.java</file>
             <file>file:/C:/Users/Romuald/Desktop/SkyWars/src/skywars/InstanceMap.java</file>
+            <file>file:/C:/Users/Romuald/Desktop/SkyWars/src/skywars/listener/PlayerListener.java</file>
             <file>file:/C:/Users/Romuald/Desktop/SkyWars/src/plugin.yml</file>
         </group>
     </open-files>

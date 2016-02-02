@@ -5,6 +5,7 @@
  */
 package skywars;
 
+import java.io.File;
 import skywars.controller.WorldController;
 import skywars.listener.PlayerListener;
 import org.bukkit.Bukkit;
@@ -28,24 +29,22 @@ public class SkyWars extends JavaPlugin {
     private Location choice_skywars = new Location(Bukkit.getWorld("World"), -498.5, 103, -501.5);
     private Location plateform = new Location(Bukkit.getWorld("World"), 21, 101, -55);
     
-    //private static World wc = new WorldCreator("SkyBool").createWorld();
     private static WorldController wc;
-    //WorldCreator cp_skybool = new WorldCreator("SkyBool").copy(skybool);
-    //private InstanceMap instance_skybool;
     
     //Méthode d'activation
     @Override
     public void onEnable() {
         instance = this;
         wc = new WorldController();
-        wc.loadWorld("SkyBool");
-        Bukkit.broadcastMessage(""+Bukkit.getWorlds());
+        wc.copyWorld(new File("SkyBool"), new File("SkyBool1"));
+        wc.loadWorld("SkyBool1");
         //Bukkit.getServer().createWorld(wc);
         //instance_skybool = new InstanceMap(wc);
         //Message en vert
         console.sendMessage("§aSkyWars actif!");
         
         this.getCommand("skywars").setExecutor(new Commands());
+        this.getCommand("skybool").setExecutor(new Commands());
         Bukkit.getPluginManager().registerEvents((Listener)new PlayerListener(), (Plugin)this);
     }
     

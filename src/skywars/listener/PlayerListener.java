@@ -10,18 +10,14 @@ import net.minecraft.server.v1_8_R3.PacketPlayOutTitle;
 import net.minecraft.server.v1_8_R3.PlayerConnection;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
-import org.bukkit.GameMode;
 import org.bukkit.craftbukkit.v1_8_R3.entity.CraftPlayer;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.Location;
 import org.bukkit.entity.ArmorStand;
-import org.bukkit.event.entity.EntityDamageEvent;
 import org.bukkit.event.player.PlayerJoinEvent;
-import org.bukkit.event.weather.WeatherChangeEvent;
 import skywars.InstanceMap;
-import skywars.SkyWars;
 
 /**
  *
@@ -141,14 +137,6 @@ public class PlayerListener implements Listener {
         skw.setVisible(false);
         skw.setCustomName(name_skw);
         skw.setCustomNameVisible(true);
-    }
-    
-    public void onChangeWeather(WeatherChangeEvent e) {
-        if(e.getWorld().hasStorm()) {
-            e.getWorld().setThundering(false);
-            e.getWorld().setStorm(false);
-            e.getWorld().setWeatherDuration(1000000);
-        }
     }
     
     public void sendTitle(Player p, String title, String subTitle, int fadeIn, int duration, int fadeOut)

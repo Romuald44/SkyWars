@@ -36,10 +36,7 @@ public class SkyWars extends JavaPlugin {
     public void onEnable() {
         instance = this;
         wc = new WorldController();
-        wc.copyWorld(new File("SkyBool"), new File("SkyBool1"));
-        wc.loadWorld("SkyBool1");
-        //Bukkit.getServer().createWorld(wc);
-        //instance_skybool = new InstanceMap(wc);
+        
         //Message en vert
         console.sendMessage("§aSkyWars actif!");
         

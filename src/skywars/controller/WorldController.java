@@ -13,14 +13,9 @@ import java.io.InputStream;
 import java.io.OutputStream;
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.List;
-import java.util.Random;
 import org.bukkit.Difficulty;
-import org.bukkit.Location;
 import org.bukkit.World;
 import org.bukkit.WorldCreator;
-import org.bukkit.generator.BlockPopulator;
-import org.bukkit.generator.ChunkGenerator;
 import skywars.SkyWars;
 
 /**
@@ -33,6 +28,8 @@ public class WorldController {
     
     public WorldController() {
         plugin = SkyWars.get();
+        copyWorld(new File("SkyBool"), new File("SkyBool1"));
+        loadWorld("SkyBool1");
     }
     
     public boolean loadWorld(String worldName){

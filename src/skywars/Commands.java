@@ -46,7 +46,8 @@ public class Commands implements CommandExecutor {
         }
         if(cmd.getName().equalsIgnoreCase("skybool") && sender instanceof Player) {
             if(args[0].equals("reload")) {
-                wc.deleteWorld("SkyBool1");
+                wc.unloadWorld("SkyBool1");
+                wc.deleteWorld(new File("SkyBool1"));
                 wc.copyWorld(new File("SkyBool"), new File("SkyBool1"));
                 wc.loadWorld("SkyBool1");
             }

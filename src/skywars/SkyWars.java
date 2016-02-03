@@ -14,6 +14,7 @@ import org.bukkit.command.ConsoleCommandSender;
 import org.bukkit.event.Listener;
 import org.bukkit.plugin.Plugin;
 import org.bukkit.plugin.java.JavaPlugin;
+import skywars.controller.GameController;
 /**
  *
  * @author Romuald
@@ -30,16 +31,19 @@ public class SkyWars extends JavaPlugin {
     private Location plateform = new Location(Bukkit.getWorld("World"), 21, 101, -55);
     
     private static WorldController wc;
+    private static GameController gc;
     
     //Méthode d'activation
     @Override
     public void onEnable() {
         instance = this;
         wc = new WorldController();
+        gc = new GameController();
         
         //Message en vert
         console.sendMessage("§aSkyWars actif!");
         
+        this.getCommand("joueurs").setExecutor(new Commands());
         this.getCommand("skywars").setExecutor(new Commands());
         this.getCommand("skybool").setExecutor(new Commands());
         Bukkit.getPluginManager().registerEvents((Listener)new PlayerListener(), (Plugin)this);
@@ -62,5 +66,9 @@ public class SkyWars extends JavaPlugin {
     
     public static WorldController getWC() {
         return wc;
+    }
+    
+    public static GameController getGC() {
+        return gc;
     }
 }

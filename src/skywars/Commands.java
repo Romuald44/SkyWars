@@ -17,6 +17,7 @@ import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
 import org.bukkit.craftbukkit.v1_8_R3.entity.CraftPlayer;
 import org.bukkit.entity.Player;
+import skywars.controller.GameController;
 import skywars.controller.WorldController;
 
 
@@ -28,9 +29,11 @@ public class Commands implements CommandExecutor {
     
     InstanceMap instance_skybool;
     WorldController wc;
+    GameController gc;
     
     public Commands() {
         wc = SkyWars.getWC();
+        gc = SkyWars.getGC();
     }
     
     @Override
@@ -40,21 +43,24 @@ public class Commands implements CommandExecutor {
         if(cmd.getName().equalsIgnoreCase("skywars") && sender instanceof Player) {
             if(args[0].equals("enter")) {
                 p.sendMessage("Ok pour la reception");
-                instance_skybool.addPlayers(p);
                 sendTitle(p, ChatColor.GREEN+"Map"+ChatColor.BLUE+" SkyBool", "", 20, 50, 20);
             }
         }
-        if(cmd.getName().equalsIgnoreCase("skybool") && sender instanceof Player) {
+        else if(cmd.getName().equalsIgnoreCase("skybool") && sender instanceof Player) {
             if(args[0].equals("reload")) {
-                wc.unloadWorld("SkyBool1");
-                wc.deleteWorld(new File("SkyBool1"));
-                wc.copyWorld(new File("SkyBool"), new File("SkyBool1"));
-                wc.loadWorld("SkyBool1");
+                wc.newInstance();
+            }
+            else if(args[0].equals("rmplayer")) {
+                gc.removePlayers(p);
             }
             else if(args[0].equals("enter")) {
-                p.teleport(new Location(Bukkit.getWorld("SkyBool1"), -165.5, 104, 294.5));
+                gc.addPlayers(p);
+                //p.teleport(new Location(Bukkit.getWorld("SkyBool1"), -165.5, 104, 294.5));
                 sendTitle(p, ChatColor.GREEN+"Map"+ChatColor.BLUE+" SkyBool", "", 20, 50, 20);
             }
+        }
+        else if(cmd.getName().equalsIgnoreCase("joueurs") && sender instanceof Player) {
+            gc.showPlayers();
         }
         return false;
     }

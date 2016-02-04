@@ -16,6 +16,7 @@ import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.Location;
+import org.bukkit.Material;
 import org.bukkit.block.Sign;
 import org.bukkit.entity.ArmorStand;
 import org.bukkit.entity.Entity;
@@ -114,20 +115,24 @@ public class PlayerListener implements Listener {
     @EventHandler
     public void onBlockBreak(BlockBreakEvent event)
     {
-        if(!gc.getStart()) {
+        if(!gc.getStart() && event.getPlayer().getWorld().equals("SkyBool1")) {
             event.setCancelled(true);
         }
     }
     
     @EventHandler
     public void onClick(PlayerInteractEvent e) {
-        Sign s = (Sign) e.getClickedBlock().getState();
-        if(s.getLine(1).equals(ChatColor.RED+"SkyBool")) {
-            s.setLine(0, ChatColor.BLUE+"§lSkyWars");
-            s.setLine(1, ChatColor.RED+"SkyBool");//instance_skybool.getPlayers()
-            s.setLine(2, ChatColor.RED+"Disponible");
-            s.setLine(3, ChatColor.BLUE+"§l"+gc.getPlayers()+" / 8");
-            s.update();
+        if(e.getPlayer().getWorld().equals("SkyBool1")) {
+            if(e.getClickedBlock().equals(Material.WALL_SIGN)) {
+                Sign s = (Sign) e.getClickedBlock().getState();
+                if(s.getLine(1).equals(ChatColor.RED+"SkyBool")) {
+                    s.setLine(0, ChatColor.BLUE+"§lSkyWars");
+                    s.setLine(1, ChatColor.RED+"SkyBool");//instance_skybool.getPlayers()
+                    s.setLine(2, ChatColor.RED+"Disponible");
+                    s.setLine(3, ChatColor.BLUE+"§l"+gc.getPlayers()+" / 8");
+                    s.update();
+                }
+            }
         }
     }
     

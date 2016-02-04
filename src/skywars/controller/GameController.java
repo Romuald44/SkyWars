@@ -79,7 +79,7 @@ public class GameController {
             this.maxPlayers--;
             this.nbPlayers++;
             p.teleport(onSpawnAlea(p));
-            if(nbPlayers >= 1) {
+            if(nbPlayers >= 2) {
                 Countdown();
             }
             else {

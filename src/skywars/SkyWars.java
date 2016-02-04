@@ -10,10 +10,15 @@ import skywars.controller.WorldController;
 import skywars.listener.PlayerListener;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
+import org.bukkit.Material;
+import org.bukkit.block.Chest;
 import org.bukkit.command.ConsoleCommandSender;
 import org.bukkit.event.Listener;
+import org.bukkit.inventory.Inventory;
+import org.bukkit.inventory.ItemStack;
 import org.bukkit.plugin.Plugin;
 import org.bukkit.plugin.java.JavaPlugin;
+import skywars.controller.ChestsController;
 import skywars.controller.GameController;
 /**
  *
@@ -32,6 +37,7 @@ public class SkyWars extends JavaPlugin {
     
     private static WorldController wc;
     private static GameController gc;
+    private static ChestsController cc;
     
     //Méthode d'activation
     @Override
@@ -39,6 +45,14 @@ public class SkyWars extends JavaPlugin {
         instance = this;
         wc = new WorldController();
         gc = new GameController();
+        cc = new ChestsController();
+        
+        Location test = new Location(Bukkit.getWorld("SkyBool1"), -74, 101, 329);
+        Chest ch = (Chest) test.getBlock().getState();
+        Inventory inv = ch.getInventory();
+        
+        inv.setItem(0, new ItemStack(Material.COBBLESTONE));
+        //cc.populateChest(test);
         
         //Message en vert
         console.sendMessage("§aSkyWars actif!");
@@ -70,5 +84,9 @@ public class SkyWars extends JavaPlugin {
     
     public static GameController getGC() {
         return gc;
+    }
+    
+    public static ChestsController getCC() {
+        return cc;
     }
 }

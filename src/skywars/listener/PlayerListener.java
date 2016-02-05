@@ -61,7 +61,7 @@ public class PlayerListener implements Listener {
         p.sendMessage("Développement par : "+ChatColor.GREEN+"EpicSaxGuy, MrTwixo, Guitou388");
     }
     
-    @EventHandler
+    /*@EventHandler
     public void PlayerDamageReceive(EntityDamageEvent e) {
         if(e.getEntity() instanceof Player) {
             Player damaged = (Player) e.getEntity();
@@ -111,11 +111,28 @@ public class PlayerListener implements Listener {
             }
         }
     }
+    */
+    
+    @EventHandler
+    public void autoRespawn(PlayerDeathEvent event)
+    {
+        Player player = event.getEntity().getPlayer();
+        Bukkit.getScheduler().scheduleSyncDelayedTask(Bukkit.getPluginManager().getPlugin("SkyWars"), new Runnable() 
+        {
+            public void run() {
+                if(player.isDead()) {
+                    player.teleport(gc.locAlea());
+                    player.setGameMode(GameMode.SPECTATOR);
+                }
+            }
+        });
+    }
     
     @EventHandler
     public void onBlockBreak(BlockBreakEvent event)
     {
-        if(!gc.getStart() && event.getPlayer().getWorld().equals("SkyBool1")) {
+        Player p = event.getPlayer();
+        if(!gc.getStart() && p.getWorld().getName().equals("SkyBool1")) {
             event.setCancelled(true);
         }
     }

@@ -47,13 +47,6 @@ public class SkyWars extends JavaPlugin {
         gc = new GameController();
         cc = new ChestsController();
         
-        Location test = new Location(Bukkit.getWorld("SkyBool1"), -74, 101, 329);
-        Chest ch = (Chest) test.getBlock().getState();
-        Inventory inv = ch.getInventory();
-        
-        inv.setItem(0, new ItemStack(Material.COBBLESTONE));
-        //cc.populateChest(test);
-        
         //Message en vert
         console.sendMessage("§aSkyWars actif!");
         
@@ -68,6 +61,8 @@ public class SkyWars extends JavaPlugin {
     public void onDisable() {
         //Message en rouge
         console.sendMessage("§aSkyWars desactive");
+        wc.unloadWorld("SkyBool1");
+        wc.deleteWorld(new File("SkyBool1"));
     }
     
     /*public static InstanceMap getIM() {

@@ -11,6 +11,7 @@ import net.minecraft.server.v1_8_R3.PacketPlayOutTitle;
 import net.minecraft.server.v1_8_R3.PlayerConnection;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
+import org.bukkit.GameMode;
 import org.bukkit.Location;
 import org.bukkit.World;
 import org.bukkit.craftbukkit.v1_8_R3.entity.CraftPlayer;
@@ -66,6 +67,8 @@ public class GameController {
     public void addPlayers(Player p) {
         if(!startgame) {
             players.add(p);
+            p.setGameMode(GameMode.SURVIVAL);
+            p.getInventory().clear();
             //setScore(p, 1);
             boolean decl = true;
             for(int i=0; i<maxPlayers; i++) {
@@ -79,7 +82,7 @@ public class GameController {
             this.maxPlayers--;
             this.nbPlayers++;
             p.teleport(onSpawnAlea(p));
-            if(nbPlayers >= 2) {
+            if(nbPlayers >= 3) {
                 Countdown();
             }
             else {
@@ -90,7 +93,7 @@ public class GameController {
     
     public void removePlayers(Player p) {
         players.remove(p);
-        for(int i=0; i<maxPlayers; i++) {
+        for(int i=0; i<8; i++) {
             if(players_sky[i][0] == p.getName()) {
                 this.players_sky[i][0] = null;
                 this.players_sky[i][1] = null;

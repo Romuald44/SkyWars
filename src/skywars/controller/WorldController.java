@@ -28,6 +28,9 @@ public class WorldController {
     
     public WorldController() {
         plugin = SkyWars.get();
+        unloadWorld("SkyBool1");
+        deleteWorld(new File("SkyBool1"));
+        
         copyWorld(new File("SkyBool"), new File("SkyBool1"));
         loadWorld("SkyBool1");
     }

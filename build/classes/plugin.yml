@@ -9,12 +9,3 @@ commands:
         description: Tp dans le skywars
     joueurs:
         description: Liste des joueurs dans l'instance
-permissions:
-  skywars.*:
-    description: Gives access to all swr commands
-    default: true
-    children:
-      swr.enter: true
-  skywars.enter:
-    description: Gives access to the swr join and quit commands
-    default: true

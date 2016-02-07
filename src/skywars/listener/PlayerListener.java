@@ -46,7 +46,7 @@ public class PlayerListener implements Listener {
         gc = SkyWars.get().getGC();
     }
     
-    @EventHandler
+    /*@EventHandler
     public void onPlayerJoin(PlayerJoinEvent e) {
         Player p = e.getPlayer();
         if(p.getWorld().getName().equals("SkyBool1")) {
@@ -56,7 +56,7 @@ public class PlayerListener implements Listener {
             door.setItemMeta(meta);
             p.getInventory().setItem(8, door);
         }
-    }
+    }*/
     
     @EventHandler
     public void onPlayerQuit(PlayerQuitEvent e) {

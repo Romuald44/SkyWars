@@ -5,7 +5,12 @@
  */
 package skywars.controller;
 
+import com.google.common.collect.Lists;
+import java.io.File;
 import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.LinkedList;
+import java.util.List;
 import net.minecraft.server.v1_8_R3.IChatBaseComponent;
 import net.minecraft.server.v1_8_R3.PacketPlayOutTitle;
 import net.minecraft.server.v1_8_R3.PlayerConnection;
@@ -15,6 +20,8 @@ import org.bukkit.GameMode;
 import org.bukkit.Location;
 import org.bukkit.Sound;
 import org.bukkit.World;
+import org.bukkit.configuration.file.FileConfiguration;
+import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.craftbukkit.v1_8_R3.entity.CraftPlayer;
 import org.bukkit.entity.Player;
 import skywars.SkyWars;
@@ -32,7 +39,8 @@ public class GameController {
     private ArrayList<Player> players = new ArrayList<Player>();
     private String[][] players_sky = new String[8][2];
     private ArrayList tab_nb_temp = new ArrayList();
-    private ArrayList<Location> loc_start = new ArrayList<Location>();
+    private List<Location> loc_start = Lists.newArrayList();
+    
     private boolean startgame = false;
     private String name_winner;
     private World instance_map;
@@ -44,14 +52,33 @@ public class GameController {
         plugin = SkyWars.get();
         wc = SkyWars.get().getWC();
         
-        loc_start.add(new Location(Bukkit.getWorld("SkyBool1"), -165.5, 104, 294.5));
-        loc_start.add(new Location(Bukkit.getWorld("SkyBool1"), -151.5, 105, 329.5));
-        loc_start.add(new Location(Bukkit.getWorld("SkyBool1"), -115.5, 104, 344.5));
-        loc_start.add(new Location(Bukkit.getWorld("SkyBool1"), -79.5, 104, 330.5));
-        loc_start.add(new Location(Bukkit.getWorld("SkyBool1"), -65.5, 104, 294.5));
-        loc_start.add(new Location(Bukkit.getWorld("SkyBool1"), -79.5, 104, 258.5));
-        loc_start.add(new Location(Bukkit.getWorld("SkyBool1"), -115.5, 104, 244.5));
-        loc_start.add(new Location(Bukkit.getWorld("SkyBool1"), -151.5, 104, 258.5));
+        loadSpawn();
+    }
+    
+    public final void loadSpawn() {
+        String map;
+        loc_start.clear();
+        File spawnFile = new File(SkyWars.get().getDataFolder(), "spawn.yml");
+
+        if (!spawnFile.exists()) {
+        	SkyWars.get().saveResource("spawn.yml", false);
+        }
+
+        if (spawnFile.exists()) {
+            FileConfiguration storage = YamlConfiguration.loadConfiguration(spawnFile);
+            
+            if (storage.contains("spawn")) {
+                if(storage.contains("spawn.map")) {
+                    map = storage.getString("spawn.map");
+                    
+                    for (String chest : storage.getStringList("spawn.position")) {
+                        List<String> spawn = new LinkedList<>(Arrays.asList(chest.split(" ")));
+
+                        loc_start.add(new Location(Bukkit.getWorld(map), Double.parseDouble(spawn.get(0)), Double.parseDouble(spawn.get(1)), Double.parseDouble(spawn.get(2))));
+                    }
+                }
+            }
+        }
     }
     
     public void resetPlayers() {

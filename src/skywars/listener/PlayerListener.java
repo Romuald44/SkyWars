@@ -174,8 +174,6 @@ public class PlayerListener implements Listener {
     }
     */
     
-    
-    
     @EventHandler
     public void autoRespawn(PlayerRespawnEvent event)
     {

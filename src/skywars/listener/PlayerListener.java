@@ -17,15 +17,19 @@ import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.Location;
 import org.bukkit.Material;
+import org.bukkit.block.Block;
 import org.bukkit.block.Sign;
 import org.bukkit.entity.ArmorStand;
-import org.bukkit.entity.Entity;
+import org.bukkit.event.block.Action;
 import org.bukkit.event.block.BlockBreakEvent;
-import org.bukkit.event.entity.EntityDamageEvent;
 import org.bukkit.event.entity.PlayerDeathEvent;
 import org.bukkit.event.player.PlayerInteractEvent;
 import org.bukkit.event.player.PlayerJoinEvent;
-import skywars.InstanceMap;
+import org.bukkit.event.player.PlayerMoveEvent;
+import org.bukkit.event.player.PlayerQuitEvent;
+import org.bukkit.event.player.PlayerRespawnEvent;
+import org.bukkit.inventory.ItemStack;
+import org.bukkit.inventory.meta.ItemMeta;
 import skywars.SkyWars;
 import skywars.controller.GameController;
 
@@ -34,31 +38,88 @@ import skywars.controller.GameController;
  * @author Romuald
  */
 public class PlayerListener implements Listener {
-   
-    Location spawn_start = new Location(Bukkit.getWorld("World"), 0.5, 101, 0.5);
-    Location choice_class = new Location(Bukkit.getWorld("World"), 500.5, 101, 500.5);
-    Location choice_skywars = new Location(Bukkit.getWorld("World"), -498.5, 103, -501.5);
-    Location plateform = new Location(Bukkit.getWorld("World"), 21, 101, -55);
-    
-    private String[][] players_sky = new String[8][2];
-    
-    private static GameController gc;
+       
+    //private String[][] players_sky = new String[8][2];
+    private static SkyWars plugin;
+    private GameController gc;
     
     public PlayerListener() {
-        gc = SkyWars.getGC();
+        plugin = SkyWars.get();
+        gc = SkyWars.get().getGC();
     }
     
     @EventHandler
     public void onPlayerJoin(PlayerJoinEvent e) {
         Player p = e.getPlayer();
-        p.setHealth(20);
-        /*ItemStack door = new ItemStack(Material.IRON_DOOR);
-        ItemMeta meta = (ItemMeta) door.getItemMeta();
-        meta.setDisplayName("Return to spawn");
-        door.setItemMeta(meta);
-        p.getInventory().setItem(8, door);*/
-        p.sendMessage(ChatColor.RED+"SkyWars");
-        p.sendMessage("Développement par : "+ChatColor.GREEN+"EpicSaxGuy, MrTwixo, Guitou388");
+        if(p.getWorld().getName().equals("SkyBool1")) {
+            ItemStack door = new ItemStack(Material.IRON_DOOR);
+            ItemMeta meta = (ItemMeta) door.getItemMeta();
+            meta.setDisplayName("Return to spawn");
+            door.setItemMeta(meta);
+            p.getInventory().setItem(8, door);
+        }
+    }
+    
+    @EventHandler
+    public void onPlayerQuit(PlayerQuitEvent e) {
+        Player p = e.getPlayer();
+        if(p.getWorld().getName().equals("SkyBool1")) {
+            gc.removePlayers(p);
+        }
+    }
+    
+    @EventHandler
+    public void onPlayerMove(PlayerMoveEvent e) {
+        Player p = e.getPlayer();
+        
+        if(p.getWorld().getName().equals("SkyBool1")) {
+            if((p.getLocation().getBlockX() == -116 && p.getLocation().getBlockY() == 100 && p.getLocation().getBlockZ() == 285) ||
+               (p.getLocation().getBlockX() == -107 && p.getLocation().getBlockY() == 100 && p.getLocation().getBlockZ() == 294) ||
+               (p.getLocation().getBlockX() == -116 && p.getLocation().getBlockY() == 100 && p.getLocation().getBlockZ() == 303) ||
+               (p.getLocation().getBlockX() == -125 && p.getLocation().getBlockY() == 100 && p.getLocation().getBlockZ() == 294)) {
+                Location lava1 = new Location(Bukkit.getWorld("SkyBool1"), -118, 110, 294);
+                Location lava2 = new Location(Bukkit.getWorld("SkyBool1"), -114, 110, 294);
+                Location lava3 = new Location(Bukkit.getWorld("SkyBool1"), -116, 110, 292);
+                Location lava4 = new Location(Bukkit.getWorld("SkyBool1"), -116, 110, 296);
+                lava1.getBlock().setType(Material.LAVA);
+                lava2.getBlock().setType(Material.LAVA);
+                lava3.getBlock().setType(Material.LAVA);
+                lava4.getBlock().setType(Material.LAVA);
+            }
+        }
+    }
+    
+    @EventHandler
+    public void onPlayerClick(PlayerInteractEvent e) {
+        Player p = e.getPlayer();
+        
+        if(p.getWorld().getName().equals("world")) {
+            if(e.getAction().equals(Action.RIGHT_CLICK_BLOCK)) {
+                if(e.getClickedBlock().getType() == Material.WALL_SIGN || e.getClickedBlock().getType() == Material.SIGN_POST || e.getClickedBlock().getType() == Material.SIGN) {
+                    Sign s = (Sign) e.getClickedBlock().getState();
+                    if(s.getLine(1).equalsIgnoreCase(ChatColor.RED+"SkyBool")) {
+                        onSignJoinable(s, p);
+                    }
+                }
+            }
+        }
+    }
+    
+    public void onSignJoinable(Sign s, Player p) {
+        if(gc.getStateGame() == false) {
+            s.setLine(2, ChatColor.RED+"Disponible");
+            gc.addPlayers(p);
+        }
+        else {
+            s.setLine(2, ChatColor.RED+"Indisponible");
+        }
+        s.setLine(3, ChatColor.BLUE+"§l"+gc.getNbPlayers()+" / 8");
+        s.update();
+        /*s.setLine(0, ChatColor.BLUE+"§lSkyWars");
+            s.setLine(1, ChatColor.RED+"SkyBool");//instance_skybool.getPlayers()
+            s.setLine(2, ChatColor.RED+"Disponible");
+            s.setLine(3, ChatColor.BLUE+"§l0 / 8");
+            s.update();*/
     }
     
     /*@EventHandler
@@ -113,19 +174,46 @@ public class PlayerListener implements Listener {
     }
     */
     
+    
+    
     @EventHandler
-    public void autoRespawn(PlayerDeathEvent event)
+    public void autoRespawn(PlayerRespawnEvent event)
     {
-        Player player = event.getEntity().getPlayer();
-        Bukkit.getScheduler().scheduleSyncDelayedTask(Bukkit.getPluginManager().getPlugin("SkyWars"), new Runnable() 
-        {
+        Player player = event.getPlayer();
+        player.setGameMode(GameMode.SPECTATOR);
+        event.setRespawnLocation(gc.locAlea());
+        
+        /*Bukkit.getScheduler().runTaskLater(SkyWars.get(), new Runnable() {
+            @Override
             public void run() {
-                if(player.isDead()) {
-                    player.teleport(gc.locAlea());
-                    player.setGameMode(GameMode.SPECTATOR);
+                if(gc.getWinner()==1) {
+                    sendTitle(Bukkit.getPlayer(gc.getNameWinner()), ChatColor.GOLD + "Winner", ChatColor.RED + "Tu leur a mis cher !", 20, 100, 20);
+
+                    Bukkit.getScheduler().runTaskLater(Bukkit.getPluginManager().getPlugin("SkyWars"), new Runnable() {
+                        @Override
+                        public void run() {
+                            for(Player pls : Bukkit.getOnlinePlayers()) {
+                                celebrate();
+                                pls.setGameMode(GameMode.SURVIVAL);
+                                pls.setHealth(20);
+                                pls.setFoodLevel(20);
+                                pls.teleport(choice_skywars);
+                            }
+                            Bukkit.dispatchCommand(player, "skybool reload");
+                            gc.resetPlayers();
+                        }
+                    }, 150);
                 }
             }
-        });
+        }, 40);*/
+    }
+    
+    @EventHandler
+    public void onDeath(PlayerDeathEvent event) {
+        if(event.getEntity() instanceof Player) {
+            Player player = event.getEntity().getPlayer();
+            gc.deathPlayer(player);
+        }
     }
     
     @EventHandler
@@ -136,30 +224,6 @@ public class PlayerListener implements Listener {
             event.setCancelled(true);
         }
     }
-    
-    @EventHandler
-    public void onClick(PlayerInteractEvent e) {
-        if(e.getPlayer().getWorld().equals("SkyBool1")) {
-            if(e.getClickedBlock().equals(Material.WALL_SIGN)) {
-                Sign s = (Sign) e.getClickedBlock().getState();
-                if(s.getLine(1).equals(ChatColor.RED+"SkyBool")) {
-                    s.setLine(0, ChatColor.BLUE+"§lSkyWars");
-                    s.setLine(1, ChatColor.RED+"SkyBool");//instance_skybool.getPlayers()
-                    s.setLine(2, ChatColor.RED+"Disponible");
-                    s.setLine(3, ChatColor.BLUE+"§l"+gc.getPlayers()+" / 8");
-                    s.update();
-                }
-            }
-        }
-    }
-    
-    /*@EventHandler
-    public void onDeath(PlayerDeathEvent e){
-        final Player player = e.getEntity();
-        final Location loc = player.getLocation();
-        final Player target = e.getEntity().getKiller();
-        
-    }*/
     
     public void GameOver(Player p) {
         p.sendMessage("ah que coucou");
@@ -174,7 +238,7 @@ public class PlayerListener implements Listener {
         String name_pvp = sb.toString();
         String name_skw = sb1.toString();
         
-        ArmorStand pvp = Bukkit.getWorld(p.getWorld().getName()).spawn(new Location(Bukkit.getWorld("World"), -10.5, 102, 11.5), ArmorStand.class);
+        ArmorStand pvp = Bukkit.getWorld(p.getWorld().getName()).spawn(new Location(Bukkit.getWorld("World"), -11.5, 102, 12.5), ArmorStand.class);
         ArmorStand skw = Bukkit.getWorld(p.getWorld().getName()).spawn(new Location(Bukkit.getWorld("World"), -11.5, 102, -11.5), ArmorStand.class);
         pvp.setVisible(false);
         pvp.setCustomName(name_pvp);

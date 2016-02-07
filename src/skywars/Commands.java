@@ -5,13 +5,10 @@
  */
 package skywars;
 
-import java.io.File;
 import net.minecraft.server.v1_8_R3.IChatBaseComponent;
 import net.minecraft.server.v1_8_R3.PacketPlayOutTitle;
 import net.minecraft.server.v1_8_R3.PlayerConnection;
-import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
-import org.bukkit.Location;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
@@ -27,14 +24,18 @@ import skywars.controller.WorldController;
  */
 public class Commands implements CommandExecutor {
     
-    InstanceMap instance_skybool;
     WorldController wc;
     GameController gc;
     
     public Commands() {
-        wc = SkyWars.getWC();
-        gc = SkyWars.getGC();
+        wc = SkyWars.get().getWC();
+        gc = SkyWars.get().getGC();
     }
+    
+    /*
+    //skywars join <MAP>
+    //skywars quit <MAP>
+    */
     
     @Override
     public boolean onCommand(CommandSender sender, Command cmd, String label, String[] args) {
@@ -42,7 +43,6 @@ public class Commands implements CommandExecutor {
         
         if(cmd.getName().equalsIgnoreCase("skywars") && sender instanceof Player) {
             if(args[0].equals("enter")) {
-                p.sendMessage("Ok pour la reception");
                 sendTitle(p, ChatColor.GREEN+"Map"+ChatColor.BLUE+" SkyBool", "", 20, 50, 20);
             }
         }

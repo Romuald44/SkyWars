@@ -13,6 +13,7 @@ import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.GameMode;
 import org.bukkit.Location;
+import org.bukkit.Sound;
 import org.bukkit.World;
 import org.bukkit.craftbukkit.v1_8_R3.entity.CraftPlayer;
 import org.bukkit.entity.Player;
@@ -25,8 +26,9 @@ import skywars.SkyWars;
 public class GameController {
     
     private static SkyWars plugin;
+    private static WorldController wc;
+    
     private int nbPlayers = 0;
-    private int maxPlayers = 8;
     private ArrayList<Player> players = new ArrayList<Player>();
     private String[][] players_sky = new String[8][2];
     private ArrayList tab_nb_temp = new ArrayList();
@@ -40,6 +42,7 @@ public class GameController {
     
     public GameController() {
         plugin = SkyWars.get();
+        wc = SkyWars.get().getWC();
         
         loc_start.add(new Location(Bukkit.getWorld("SkyBool1"), -165.5, 104, 294.5));
         loc_start.add(new Location(Bukkit.getWorld("SkyBool1"), -151.5, 105, 329.5));
@@ -67,11 +70,14 @@ public class GameController {
     public void addPlayers(Player p) {
         if(!startgame) {
             players.add(p);
-            p.setGameMode(GameMode.SURVIVAL);
-            p.getInventory().clear();
+            this.nbPlayers++;
+            
+            p.setGameMode(GameMode.SURVIVAL);//Mettre le joueur en survie
+            p.getInventory().clear();//Vider l'inventaire
+            p.getInventory().setArmorContents(null);//A poil !
             //setScore(p, 1);
             boolean decl = true;
-            for(int i=0; i<maxPlayers; i++) {
+            for(int i=0; i<8; i++) {
                 if(players_sky[i][0] == null && decl) {
                     this.players_sky[i][0] = p.getName();
                     this.players_sky[i][1] = "1";
@@ -79,10 +85,15 @@ public class GameController {
                 }
             }
             //setBoard(p, players, "Liste Joueurs");
-            this.maxPlayers--;
-            this.nbPlayers++;
+            
             p.teleport(onSpawnAlea(p));
-            if(nbPlayers >= 3) {
+            
+            for(Player pls : players) {
+                pls.sendMessage(ChatColor.GOLD+p.getName()+ChatColor.AQUA+" à rejoint la partie");
+            }
+            
+            if(nbPlayers >= 1) {
+                shutCount();
                 Countdown();
             }
             else {
@@ -93,15 +104,53 @@ public class GameController {
     
     public void removePlayers(Player p) {
         players.remove(p);
+        this.nbPlayers--;
+        
         for(int i=0; i<8; i++) {
             if(players_sky[i][0] == p.getName()) {
                 this.players_sky[i][0] = null;
                 this.players_sky[i][1] = null;
             }
         }
+        for(Player pls : players) {
+            pls.sendMessage(ChatColor.GOLD+p.getName()+ChatColor.AQUA+" à quitté la partie");
+        }
         //setBoard(p, players, "Liste Joueurs");
-        this.maxPlayers++;
-        this.nbPlayers--;
+        
+        if(nbPlayers >= 1) {
+            shutCount();
+            Countdown();
+        }
+        else {
+            shutCount();
+        }
+    }
+    
+    public void deathPlayer(Player p) {
+        players.remove(p);
+        
+        for(int i=0; i<8; i++) {
+            if(players_sky[i][0].equals(p.getName())) {
+                players_sky[i][1] = "0";
+            }
+        }
+        
+        if(players.size() == 1) {
+            sendTitle(players.get(0), ChatColor.GOLD + "Winner", ChatColor.RED + "Tu leur a mis cher !", 20, 100, 20);
+
+            Bukkit.getScheduler().runTaskLater(Bukkit.getPluginManager().getPlugin("SkyWars"), new Runnable() {
+                @Override
+                public void run() {
+                    for(Player pls : Bukkit.getOnlinePlayers()) {
+                        pls.setGameMode(GameMode.SURVIVAL);
+                        pls.setHealth(20);
+                        pls.setFoodLevel(20);
+                        pls.teleport(new Location(Bukkit.getWorld("World"), -498.5, 103, -501.5));
+                    }
+                    SkyWars.get().reset();
+                }
+            }, 150);
+        }
     }
     
     public int getWinner() {
@@ -112,13 +161,16 @@ public class GameController {
         return name_winner;
     }
     
+    public boolean getStateGame() {
+        return startgame;
+    }
+    
     public void setNameWinner(String n_win) {
         this.name_winner = n_win;
     }
     
-    public void setWinner() {
-        this.winner=0;
-        this.winner++;
+    public void setWinner(int nb) {
+        this.winner = nb;
     }
     
     public boolean getStart() {
@@ -129,7 +181,7 @@ public class GameController {
         return players_sky;
     }
     
-    public int getPlayers() {
+    public int getNbPlayers() {
         return nbPlayers;
     }
     
@@ -161,18 +213,25 @@ public class GameController {
                 
                 if(seconds == 0) {
                     Bukkit.getScheduler().cancelTask(task);
-                    for(Player pls : Bukkit.getOnlinePlayers()) {
+                    for(Player pls : players) {
+                        pls.playSound(pls.getLocation(), Sound.EXPLODE, 10, 360);//Beep de départ
                         sendTitle(pls, ChatColor.RED + "GANG BANG !", "", 10, 20, 10);
                         startgame = true;
                     }
                     starting();
                 }
-                if((seconds == 20) || (seconds > 0 && seconds <= 10)) {
-                    for(Player pls : Bukkit.getOnlinePlayers()) {
+                else if((seconds == 20)) {
+                    for(Player pls : players) {
+                        pls.sendMessage("Début de la partie dans "+ChatColor.RED+seconds+" secondes");
+                    }
+                }
+                else if(seconds > 0 && seconds <= 10) {
+                    for(Player pls : players) {
+                        if(seconds <= 3) {
+                            pls.playSound(pls.getLocation(), Sound.CLICK, 10, 360);
+                        }
                         sendTitle(pls, ChatColor.RED + Integer.toString(seconds), "", 10, 20, 10);
                     }
-                    
-                    //Bukkit.broadcastMessage("Début de la partie dans "+ChatColor.RED+seconds+" secondes");
                 }
             }
         }, 20, 20);

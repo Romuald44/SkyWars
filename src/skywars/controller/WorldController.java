@@ -29,7 +29,7 @@ public class WorldController {
     public WorldController() {
         plugin = SkyWars.get();
         unloadWorld("SkyBool1");
-        deleteWorld(new File("SkyBool1"));
+        deleteWorld("SkyBool1");
         
         copyWorld(new File("SkyBool"), new File("SkyBool1"));
         loadWorld("SkyBool1");
@@ -39,27 +39,6 @@ public class WorldController {
         String isLobby = worldName.substring(0, Math.min(worldName.length(), 5));
         WorldCreator worldCreator = new WorldCreator(worldName);
         worldCreator.generateStructures(false);
-        /*worldCreator.generator(new ChunkGenerator() {
-            @Override
-        	public List<BlockPopulator> getDefaultPopulators(World world) {
-                return Arrays.asList(new BlockPopulator[0]);
-            }
-            
-            @Override
-            public boolean canSpawn(World world, int x, int z) {
-                return true;
-            }
-            
-            @Override
-            public byte[] generate(World world, Random random, int x, int z) {
-                return new byte[32768];
-            }
-    
-            @Override
-            public Location getFixedSpawnLocation(World world, Random random) {
-                return new Location(world, 0.0D, 64.0D, 0.0D);
-            }
-        });*/
 	World world = worldCreator.createWorld();
         world.setDifficulty(Difficulty.NORMAL);
         world.setSpawnFlags(true, true);
@@ -72,10 +51,12 @@ public class WorldController {
         world.setThundering(false);
         world.setWeatherDuration(Integer.MAX_VALUE);
         world.setAutoSave(false);
+        world.setTime(1000);
         world.setKeepSpawnInMemory(false);
         world.setTicksPerAnimalSpawns(0);
         world.setTicksPerMonsterSpawns(0);
         
+        world.setGameRuleValue("keepInventory ", "false");
         world.setGameRuleValue("doMobSpawning", "false");
         world.setGameRuleValue("mobGriefing", "false");
         world.setGameRuleValue("doFireTick", "false");
@@ -149,7 +130,7 @@ public class WorldController {
 
     public void newInstance() {
         unloadWorld("SkyBool1");
-        deleteWorld(new File("SkyBool1"));
+        deleteWorld("SkyBool1");
         copyWorld(new File("SkyBool"), new File("SkyBool1"));
         loadWorld("SkyBool1");
     }

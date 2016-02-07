@@ -24,6 +24,7 @@ import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.craftbukkit.v1_8_R3.entity.CraftPlayer;
 import org.bukkit.entity.Player;
+import skywars.ScoreBoard;
 import skywars.SkyWars;
 
 /**
@@ -33,24 +34,25 @@ import skywars.SkyWars;
 public class GameController {
     
     private static SkyWars plugin;
-    private static WorldController wc;
+    private WorldController wc;
+    //private ScoreBoard sb;
     
     private int nbPlayers = 0;
-    private ArrayList<Player> players = new ArrayList<Player>();
+    private List<Player> players = new ArrayList<Player>();
     private String[][] players_sky = new String[8][2];
     private ArrayList tab_nb_temp = new ArrayList();
     private List<Location> loc_start = Lists.newArrayList();
     
     private boolean startgame = false;
     private String name_winner;
-    private World instance_map;
     private int winner=0;
-    int task;
-    int seconds = 21;
+    private int task;
+    private int seconds = 21;
     
     public GameController() {
         plugin = SkyWars.get();
         wc = SkyWars.get().getWC();
+        //sb = SkyWars.get().getSB();
         
         loadSpawn();
     }
@@ -102,7 +104,8 @@ public class GameController {
             p.setGameMode(GameMode.SURVIVAL);//Mettre le joueur en survie
             p.getInventory().clear();//Vider l'inventaire
             p.getInventory().setArmorContents(null);//A poil !
-            //setScore(p, 1);
+            //sb.setScore(p, 1);
+            
             boolean decl = true;
             for(int i=0; i<8; i++) {
                 if(players_sky[i][0] == null && decl) {
@@ -111,7 +114,7 @@ public class GameController {
                     decl=false;
                 }
             }
-            //setBoard(p, players, "Liste Joueurs");
+            //sb.setBoard(p, players, "Liste Joueurs");
             
             p.teleport(onSpawnAlea(p));
             
@@ -134,15 +137,16 @@ public class GameController {
         this.nbPlayers--;
         
         for(int i=0; i<8; i++) {
-            if(players_sky[i][0] == p.getName()) {
+            if(players_sky[i][0].equals(p.getName())) {
                 this.players_sky[i][0] = null;
                 this.players_sky[i][1] = null;
             }
         }
+        
         for(Player pls : players) {
             pls.sendMessage(ChatColor.GOLD+p.getName()+ChatColor.AQUA+" à quitté la partie");
         }
-        //setBoard(p, players, "Liste Joueurs");
+        //sb.setBoard(p, players, "Liste Joueurs");
         
         if(nbPlayers >= 1) {
             shutCount();
@@ -155,12 +159,14 @@ public class GameController {
     
     public void deathPlayer(Player p) {
         players.remove(p);
+        //sb.setScore(p, 0);
+        //sb.setBoard(p, players, "Liste Joueurs");
         
-        for(int i=0; i<8; i++) {
+        /*for(int i=0; i<8; i++) {
             if(players_sky[i][0].equals(p.getName())) {
                 players_sky[i][1] = "0";
             }
-        }
+        }*/
         
         if(players.size() == 1) {
             sendTitle(players.get(0), ChatColor.GOLD + "Winner", ChatColor.RED + "Tu leur a mis cher !", 20, 100, 20);

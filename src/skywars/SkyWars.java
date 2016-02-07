@@ -34,6 +34,7 @@ public class SkyWars extends JavaPlugin {
     private WorldController wc;
     private GameController gc;
     private ChestsController cc;
+    //private ScoreBoard sb;
     
     //Méthode d'activation
     @Override
@@ -42,6 +43,7 @@ public class SkyWars extends JavaPlugin {
         wc = new WorldController();
         gc = new GameController();
         cc = new ChestsController();
+        //sb = new ScoreBoard();
         
         //Message en vert
         console.sendMessage("§aSkyWars actif!");
@@ -76,6 +78,10 @@ public class SkyWars extends JavaPlugin {
     public ChestsController getCC() {
         return cc;
     }
+    
+    /*public ScoreBoard getSB() {
+        return sb;
+    }*/
     
     public Location getSpawn() {
         return spawn_start;

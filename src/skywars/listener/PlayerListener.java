@@ -17,7 +17,6 @@ import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.Location;
 import org.bukkit.Material;
-import org.bukkit.block.Block;
 import org.bukkit.block.Sign;
 import org.bukkit.entity.ArmorStand;
 import org.bukkit.event.block.Action;
@@ -39,7 +38,6 @@ import skywars.controller.GameController;
  */
 public class PlayerListener implements Listener {
        
-    //private String[][] players_sky = new String[8][2];
     private static SkyWars plugin;
     private GameController gc;
     
@@ -180,30 +178,6 @@ public class PlayerListener implements Listener {
         Player player = event.getPlayer();
         player.setGameMode(GameMode.SPECTATOR);
         event.setRespawnLocation(gc.locAlea());
-        
-        /*Bukkit.getScheduler().runTaskLater(SkyWars.get(), new Runnable() {
-            @Override
-            public void run() {
-                if(gc.getWinner()==1) {
-                    sendTitle(Bukkit.getPlayer(gc.getNameWinner()), ChatColor.GOLD + "Winner", ChatColor.RED + "Tu leur a mis cher !", 20, 100, 20);
-
-                    Bukkit.getScheduler().runTaskLater(Bukkit.getPluginManager().getPlugin("SkyWars"), new Runnable() {
-                        @Override
-                        public void run() {
-                            for(Player pls : Bukkit.getOnlinePlayers()) {
-                                celebrate();
-                                pls.setGameMode(GameMode.SURVIVAL);
-                                pls.setHealth(20);
-                                pls.setFoodLevel(20);
-                                pls.teleport(choice_skywars);
-                            }
-                            Bukkit.dispatchCommand(player, "skybool reload");
-                            gc.resetPlayers();
-                        }
-                    }, 150);
-                }
-            }
-        }, 40);*/
     }
     
     @EventHandler

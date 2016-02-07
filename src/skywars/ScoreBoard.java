@@ -13,7 +13,6 @@ import java.util.NoSuchElementException;
 import java.util.Set;
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
-import org.bukkit.event.Listener;
 import org.bukkit.scoreboard.DisplaySlot;
 import org.bukkit.scoreboard.Objective;
 import org.bukkit.scoreboard.Score;
@@ -23,7 +22,7 @@ import org.bukkit.scoreboard.Scoreboard;
  *
  * @author Romuald
  */
-public class ScoreBoard implements Listener {
+public class ScoreBoard {
    
     private Scoreboard sb = Bukkit.getScoreboardManager().getNewScoreboard();
     private Scoreboard sbBuffer = Bukkit.getScoreboardManager().getNewScoreboard();
@@ -81,6 +80,4 @@ public class ScoreBoard implements Listener {
 
         objective.getScoreboard().resetScores(scorePlayer.get(min));
     }
-    
-    
 }

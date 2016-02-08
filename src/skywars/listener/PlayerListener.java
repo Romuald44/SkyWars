@@ -61,7 +61,7 @@ public class PlayerListener implements Listener {
     @EventHandler
     public void onPlayerQuit(PlayerQuitEvent e) {
         Player p = e.getPlayer();
-        if(p.getWorld().getName().equals("SkyBool1")) {
+        if(p.getWorld().getName().equalsIgnoreCase("SkyBool1")) {
             gc.removePlayers(p);
         }
     }
@@ -176,7 +176,6 @@ public class PlayerListener implements Listener {
     public void autoRespawn(PlayerRespawnEvent event)
     {
         Player player = event.getPlayer();
-        player.setGameMode(GameMode.SPECTATOR);
         event.setRespawnLocation(gc.locAlea());
     }
     
@@ -184,6 +183,7 @@ public class PlayerListener implements Listener {
     public void onDeath(PlayerDeathEvent event) {
         if(event.getEntity() instanceof Player) {
             Player player = event.getEntity().getPlayer();
+            player.setGameMode(GameMode.SPECTATOR);
             gc.deathPlayer(player);
         }
     }

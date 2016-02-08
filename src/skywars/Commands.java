@@ -60,7 +60,7 @@ public class Commands implements CommandExecutor {
             }
         }
         else if(cmd.getName().equalsIgnoreCase("joueurs") && sender instanceof Player) {
-            gc.showPlayers();
+            gc.showplayers();
         }
         return false;
     }

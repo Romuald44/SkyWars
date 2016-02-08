@@ -39,7 +39,6 @@ public class GameController {
     
     private int nbPlayers = 0;
     private List<Player> players = new ArrayList<Player>();
-    private String[][] players_sky = new String[8][2];
     private ArrayList tab_nb_temp = new ArrayList();
     private List<Location> loc_start = Lists.newArrayList();
     
@@ -83,17 +82,8 @@ public class GameController {
         }
     }
     
-    public void resetPlayers() {
-        for(int i=0; i<nbPlayers; i++) {
-            players_sky[i][0]=null;
-            players_sky[i][1]=null;
-        }
-    }
-    
-    public void showPlayers() {
-        for(int i=0; i<8; i++) {
-            Bukkit.broadcastMessage("Joueurs : "+players_sky[i][0]+" nb : "+players_sky[i][1]);
-        }
+    public void showplayers() {
+        Bukkit.getPlayer("EpicSaxGuy").sendMessage(players.toArray().toString());
     }
     
     public void addPlayers(Player p) {
@@ -106,14 +96,6 @@ public class GameController {
             p.getInventory().setArmorContents(null);//A poil !
             //sb.setScore(p, 1);
             
-            boolean decl = true;
-            for(int i=0; i<8; i++) {
-                if(players_sky[i][0] == null && decl) {
-                    this.players_sky[i][0] = p.getName();
-                    this.players_sky[i][1] = "1";
-                    decl=false;
-                }
-            }
             //sb.setBoard(p, players, "Liste Joueurs");
             
             p.teleport(onSpawnAlea(p));
@@ -122,7 +104,7 @@ public class GameController {
                 pls.sendMessage(ChatColor.GOLD+p.getName()+ChatColor.AQUA+" à rejoint la partie");
             }
             
-            if(nbPlayers >= 1) {
+            if(nbPlayers >= 3) {
                 shutCount();
                 Countdown();
             }
@@ -135,13 +117,6 @@ public class GameController {
     public void removePlayers(Player p) {
         players.remove(p);
         this.nbPlayers--;
-        
-        for(int i=0; i<8; i++) {
-            if(players_sky[i][0].equals(p.getName())) {
-                this.players_sky[i][0] = null;
-                this.players_sky[i][1] = null;
-            }
-        }
         
         for(Player pls : players) {
             pls.sendMessage(ChatColor.GOLD+p.getName()+ChatColor.AQUA+" à quitté la partie");
@@ -161,12 +136,6 @@ public class GameController {
         players.remove(p);
         //sb.setScore(p, 0);
         //sb.setBoard(p, players, "Liste Joueurs");
-        
-        /*for(int i=0; i<8; i++) {
-            if(players_sky[i][0].equals(p.getName())) {
-                players_sky[i][1] = "0";
-            }
-        }*/
         
         if(players.size() == 1) {
             sendTitle(players.get(0), ChatColor.GOLD + "Winner", ChatColor.RED + "Tu leur a mis cher !", 20, 100, 20);
@@ -208,10 +177,6 @@ public class GameController {
     
     public boolean getStart() {
         return startgame;
-    }
-    
-    public String[][] Players_Sky() {
-        return players_sky;
     }
     
     public int getNbPlayers() {

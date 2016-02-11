@@ -83,7 +83,10 @@ public class GameController {
     }
     
     public void showplayers() {
-        Bukkit.getPlayer("EpicSaxGuy").sendMessage(players.toArray().toString());
+        for(Player test : players) {
+            Bukkit.getPlayer("EpicSaxGuy").sendMessage(test.getName());
+        }
+        
     }
     
     public void addPlayers(Player p) {
@@ -123,6 +126,8 @@ public class GameController {
         }
         //sb.setBoard(p, players, "Liste Joueurs");
         
+        p.teleport(plugin.getLobbySW());
+        
         if(nbPlayers >= 1) {
             shutCount();
             Countdown();
@@ -149,6 +154,7 @@ public class GameController {
                         pls.setFoodLevel(20);
                         pls.teleport(new Location(Bukkit.getWorld("World"), -498.5, 103, -501.5));
                     }
+                    players.clear();
                     SkyWars.get().reset();
                 }
             }, 150);

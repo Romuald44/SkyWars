@@ -129,5 +129,20 @@ public class WorldController {
         deleteWorld("SkyBool1");
         copyWorld(new File("SkyBool"), new File("SkyBool1"));
         loadWorld("SkyBool1");
+        
+        unloadWorld("TempleRun1");
+        deleteWorld("TempleRun1");
+        copyWorld(new File("TempleRun"), new File("TempleRun1"));
+        loadWorld("TempleRun1");
+        
+        unloadWorld("Prairie1");
+        deleteWorld("Prairie1");
+        copyWorld(new File("Prairie"), new File("Prairie1"));
+        loadWorld("Prairie1");
+        
+        unloadWorld("NetherWars1");
+        deleteWorld("NetherWars1");
+        copyWorld(new File("NetherWars"), new File("NetherWars1"));
+        loadWorld("NetherWars1");
     }
 }

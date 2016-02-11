@@ -18,17 +18,13 @@ import org.bukkit.event.Listener;
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.block.Sign;
-import org.bukkit.entity.ArmorStand;
 import org.bukkit.event.block.Action;
 import org.bukkit.event.block.BlockBreakEvent;
 import org.bukkit.event.entity.PlayerDeathEvent;
 import org.bukkit.event.player.PlayerInteractEvent;
-import org.bukkit.event.player.PlayerJoinEvent;
 import org.bukkit.event.player.PlayerMoveEvent;
 import org.bukkit.event.player.PlayerQuitEvent;
 import org.bukkit.event.player.PlayerRespawnEvent;
-import org.bukkit.inventory.ItemStack;
-import org.bukkit.inventory.meta.ItemMeta;
 import skywars.SkyWars;
 import skywars.controller.GameController;
 
@@ -95,7 +91,7 @@ public class PlayerListener implements Listener {
             if(e.getAction().equals(Action.RIGHT_CLICK_BLOCK)) {
                 if(e.getClickedBlock().getType() == Material.WALL_SIGN || e.getClickedBlock().getType() == Material.SIGN_POST || e.getClickedBlock().getType() == Material.SIGN) {
                     Sign s = (Sign) e.getClickedBlock().getState();
-                    if(s.getLine(1).equalsIgnoreCase(ChatColor.RED+"SkyBool")) {
+                    if(s.getLine(1).equalsIgnoreCase(ChatColor.DARK_RED+"SkyBool")) {
                         onSignJoinable(s, p);
                     }
                 }
@@ -105,11 +101,11 @@ public class PlayerListener implements Listener {
     
     public void onSignJoinable(Sign s, Player p) {
         if(gc.getStateGame() == false) {
-            s.setLine(2, ChatColor.RED+"Disponible");
+            s.setLine(2, ChatColor.DARK_RED+"Disponible");
             gc.addPlayers(p);
         }
         else {
-            s.setLine(2, ChatColor.RED+"Indisponible");
+            s.setLine(2, ChatColor.DARK_RED+"Indisponible");
         }
         s.setLine(3, ChatColor.BLUE+"§l"+gc.getNbPlayers()+" / 8");
         s.update();
@@ -119,6 +115,67 @@ public class PlayerListener implements Listener {
             s.setLine(3, ChatColor.BLUE+"§l0 / 8");
             s.update();*/
     }
+    
+    @EventHandler
+    public void autoRespawn(PlayerRespawnEvent event)
+    {
+        Player player = event.getPlayer();
+        if(player.getWorld().getName().equals("SkyBool1")) {
+            event.setRespawnLocation(gc.locAlea());
+        }
+    }
+    
+    @EventHandler
+    public void onDeath(PlayerDeathEvent event) {
+        if(event.getEntity() instanceof Player) {
+            Player player = event.getEntity().getPlayer();
+            if(player.getWorld().getName().equals("SkyBool1")) {
+                player.setGameMode(GameMode.SPECTATOR);
+                gc.deathPlayer(player);
+            }
+        }
+    }
+    
+    @EventHandler
+    public void onBlockBreak(BlockBreakEvent event)
+    {
+        Player p = event.getPlayer();
+        if(!gc.getStart() && p.getWorld().getName().equals("SkyBool1")) {
+            event.setCancelled(true);
+        }
+    }
+    
+    public void sendTitle(Player p, String title, String subTitle, int fadeIn, int duration, int fadeOut)
+    {
+            CraftPlayer craftplayer = (CraftPlayer)p;
+            PlayerConnection connection = craftplayer.getHandle().playerConnection;
+            IChatBaseComponent titleJSON = IChatBaseComponent.ChatSerializer.a("{'text': '" + title + "'}");
+            IChatBaseComponent subtitleJSON = IChatBaseComponent.ChatSerializer.a("{'text': '" + subTitle + "'}");
+            PacketPlayOutTitle timesPacket = new PacketPlayOutTitle(PacketPlayOutTitle.EnumTitleAction.TIMES, titleJSON, fadeIn, duration, fadeOut);
+            PacketPlayOutTitle titlePacket = new PacketPlayOutTitle(PacketPlayOutTitle.EnumTitleAction.TITLE, titleJSON);
+            PacketPlayOutTitle subtitlePacket = new PacketPlayOutTitle(PacketPlayOutTitle.EnumTitleAction.SUBTITLE, subtitleJSON);
+            connection.sendPacket(timesPacket);
+            connection.sendPacket(titlePacket);
+            connection.sendPacket(subtitlePacket);
+    }
+    
+    /*public void flag(Player p, Team t) {
+        if(t.getName().equals("red")) {
+            ItemStack redFlag = new ItemStack(Material.BANNER, 1);
+            BannerMeta redMeta = (BannerMeta) redFlag.getItemMeta();
+            redMeta.setBaseColor(DyeColor.RED);
+            redMeta.setDisplayName("§cRouge");
+            redFlag.setItemMeta(redMeta);
+            p.getInventory().setHelmet(redFlag);
+        } else if(t.getName().equals("blue")) {
+            ItemStack blueFlag = new ItemStack(Material.BANNER, 1);
+            BannerMeta blueMeta = (BannerMeta) blueFlag.getItemMeta();
+            blueMeta.setBaseColor(DyeColor.LIGHT_BLUE);
+            blueMeta.setDisplayName("§9Bleu");
+            blueFlag.setItemMeta(blueMeta);
+            p.getInventory().setHelmet(blueFlag);
+        }
+    }*/
     
     /*@EventHandler
     public void PlayerDamageReceive(EntityDamageEvent e) {
@@ -168,88 +225,6 @@ public class PlayerListener implements Listener {
                     }
                 }
             }
-        }
-    }
-    */
-    
-    @EventHandler
-    public void autoRespawn(PlayerRespawnEvent event)
-    {
-        Player player = event.getPlayer();
-        event.setRespawnLocation(gc.locAlea());
-    }
-    
-    @EventHandler
-    public void onDeath(PlayerDeathEvent event) {
-        if(event.getEntity() instanceof Player) {
-            Player player = event.getEntity().getPlayer();
-            player.setGameMode(GameMode.SPECTATOR);
-            gc.deathPlayer(player);
-        }
-    }
-    
-    @EventHandler
-    public void onBlockBreak(BlockBreakEvent event)
-    {
-        Player p = event.getPlayer();
-        if(!gc.getStart() && p.getWorld().getName().equals("SkyBool1")) {
-            event.setCancelled(true);
-        }
-    }
-    
-    public void GameOver(Player p) {
-        p.sendMessage("ah que coucou");
-    }
-    
-    public void hologramme(Player p) {
-        StringBuilder sb = new StringBuilder();
-        StringBuilder sb1 = new StringBuilder();
-        
-        sb.append("PVP");
-        sb1.append("SkyWars");
-        String name_pvp = sb.toString();
-        String name_skw = sb1.toString();
-        
-        ArmorStand pvp = Bukkit.getWorld(p.getWorld().getName()).spawn(new Location(Bukkit.getWorld("World"), -11.5, 102, 12.5), ArmorStand.class);
-        ArmorStand skw = Bukkit.getWorld(p.getWorld().getName()).spawn(new Location(Bukkit.getWorld("World"), -11.5, 102, -11.5), ArmorStand.class);
-        pvp.setVisible(false);
-        pvp.setCustomName(name_pvp);
-        pvp.setCustomNameVisible(true);
-        
-        skw.setVisible(false);
-        skw.setCustomName(name_skw);
-        skw.setCustomNameVisible(true);
-    }
-    
-    public void sendTitle(Player p, String title, String subTitle, int fadeIn, int duration, int fadeOut)
-    {
-            CraftPlayer craftplayer = (CraftPlayer)p;
-            PlayerConnection connection = craftplayer.getHandle().playerConnection;
-            IChatBaseComponent titleJSON = IChatBaseComponent.ChatSerializer.a("{'text': '" + title + "'}");
-            IChatBaseComponent subtitleJSON = IChatBaseComponent.ChatSerializer.a("{'text': '" + subTitle + "'}");
-            PacketPlayOutTitle timesPacket = new PacketPlayOutTitle(PacketPlayOutTitle.EnumTitleAction.TIMES, titleJSON, fadeIn, duration, fadeOut);
-            PacketPlayOutTitle titlePacket = new PacketPlayOutTitle(PacketPlayOutTitle.EnumTitleAction.TITLE, titleJSON);
-            PacketPlayOutTitle subtitlePacket = new PacketPlayOutTitle(PacketPlayOutTitle.EnumTitleAction.SUBTITLE, subtitleJSON);
-            connection.sendPacket(timesPacket);
-            connection.sendPacket(titlePacket);
-            connection.sendPacket(subtitlePacket);
-    }
-    
-    /*public void flag(Player p, Team t) {
-        if(t.getName().equals("red")) {
-            ItemStack redFlag = new ItemStack(Material.BANNER, 1);
-            BannerMeta redMeta = (BannerMeta) redFlag.getItemMeta();
-            redMeta.setBaseColor(DyeColor.RED);
-            redMeta.setDisplayName("§cRouge");
-            redFlag.setItemMeta(redMeta);
-            p.getInventory().setHelmet(redFlag);
-        } else if(t.getName().equals("blue")) {
-            ItemStack blueFlag = new ItemStack(Material.BANNER, 1);
-            BannerMeta blueMeta = (BannerMeta) blueFlag.getItemMeta();
-            blueMeta.setBaseColor(DyeColor.LIGHT_BLUE);
-            blueMeta.setDisplayName("§9Bleu");
-            blueFlag.setItemMeta(blueMeta);
-            p.getInventory().setHelmet(blueFlag);
         }
     }*/
 }

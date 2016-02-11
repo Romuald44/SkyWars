@@ -24,39 +24,31 @@ import skywars.controller.WorldController;
  */
 public class Commands implements CommandExecutor {
     
-    WorldController wc;
-    GameController gc;
+    private static SkyWars plugin;
+    private WorldController wc;
+    private GameController gc;
     
     public Commands() {
+        plugin = SkyWars.get();
         wc = SkyWars.get().getWC();
         gc = SkyWars.get().getGC();
     }
-    
-    /*
-    //skywars join <MAP>
-    //skywars quit <MAP>
-    */
     
     @Override
     public boolean onCommand(CommandSender sender, Command cmd, String label, String[] args) {
         Player p = (Player) sender;
         
         if(cmd.getName().equalsIgnoreCase("skywars") && sender instanceof Player) {
-            if(args[0].equals("enter")) {
-                sendTitle(p, ChatColor.GREEN+"Map"+ChatColor.BLUE+" SkyBool", "", 20, 50, 20);
+            if(args[0].equalsIgnoreCase("join")) {
+                if(args[1].equalsIgnoreCase("skybool")) {
+                    gc.addPlayers(p);
+                    sendTitle(p, ChatColor.GREEN+"Map"+ChatColor.BLUE+" SkyBool", "", 20, 50, 20);
+                }
             }
-        }
-        else if(cmd.getName().equalsIgnoreCase("skybool") && sender instanceof Player) {
-            if(args[0].equals("reload")) {
-                wc.newInstance();
-            }
-            else if(args[0].equals("rmplayer")) {
-                gc.removePlayers(p);
-            }
-            else if(args[0].equals("enter")) {
-                gc.addPlayers(p);
-                //p.teleport(new Location(Bukkit.getWorld("SkyBool1"), -165.5, 104, 294.5));
-                sendTitle(p, ChatColor.GREEN+"Map"+ChatColor.BLUE+" SkyBool", "", 20, 50, 20);
+            else if(args[0].equals("quit")) {
+                if(args[1].equalsIgnoreCase("skybool")) {
+                    gc.removePlayers(p);
+                }
             }
         }
         else if(cmd.getName().equalsIgnoreCase("joueurs") && sender instanceof Player) {

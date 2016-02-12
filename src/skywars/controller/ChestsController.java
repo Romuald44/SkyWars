@@ -94,10 +94,10 @@ public class ChestsController {
     public boolean loadChests() {
         String map;
         chestList.clear();
-        File chestFile = new File(SkyWars.get().getDataFolder(), "chests.yml");
+        File chestFile = new File(SkyWars.get().getDataFolder(), "chests_SkyBool1.yml");
 
         if (!chestFile.exists()) {
-        	SkyWars.get().saveResource("chests.yml", false);
+        	SkyWars.get().saveResource("chests_SkyBool1.yml", false);
         }
 
         if (chestFile.exists()) {

@@ -25,6 +25,11 @@ import org.bukkit.event.player.PlayerInteractEvent;
 import org.bukkit.event.player.PlayerMoveEvent;
 import org.bukkit.event.player.PlayerQuitEvent;
 import org.bukkit.event.player.PlayerRespawnEvent;
+import org.bukkit.scoreboard.DisplaySlot;
+import org.bukkit.scoreboard.Objective;
+import org.bukkit.scoreboard.Score;
+import org.bukkit.scoreboard.Scoreboard;
+import org.bukkit.scoreboard.ScoreboardManager;
 import skywars.SkyWars;
 import skywars.controller.GameController;
 
@@ -57,7 +62,7 @@ public class PlayerListener implements Listener {
     @EventHandler
     public void onPlayerQuit(PlayerQuitEvent e) {
         Player p = e.getPlayer();
-        if(p.getWorld().getName().equalsIgnoreCase("SkyBool1")) {
+        if(p.getWorld().getName().equals("SkyBool1")) {
             gc.removePlayers(p);
         }
     }
@@ -129,19 +134,16 @@ public class PlayerListener implements Listener {
     public void onDeath(PlayerDeathEvent event) {
         if(event.getEntity() instanceof Player) {
             Player player = event.getEntity().getPlayer();
+            Player killer = player.getKiller();
             if(player.getWorld().getName().equals("SkyBool1")) {
                 player.setGameMode(GameMode.SPECTATOR);
-                gc.deathPlayer(player);
+                if(killer instanceof Player) {
+                    gc.deathPlayer(player, killer);
+                }
+                else {
+                    gc.deathPlayer(player, null);
+                }
             }
-        }
-    }
-    
-    @EventHandler
-    public void onBlockBreak(BlockBreakEvent event)
-    {
-        Player p = event.getPlayer();
-        if(!gc.getStart() && p.getWorld().getName().equals("SkyBool1")) {
-            event.setCancelled(true);
         }
     }
     

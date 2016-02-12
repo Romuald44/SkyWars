@@ -5,11 +5,15 @@
         <group>
             <file>file:/C:/Users/Romuald/Desktop/Minecraft/SkyWars/src/skywars/Commands.java</file>
             <file>file:/C:/Users/Romuald/Desktop/Minecraft/SkyWars/src/skywars/controller/ChestsController.java</file>
+            <file>file:/C:/Users/Romuald/Desktop/Minecraft/SkyWars/src/spawn_SkyBool1.yml</file>
             <file>file:/C:/Users/Romuald/Desktop/Minecraft/SkyWars/src/skywars/controller/GameController.java</file>
             <file>file:/C:/Users/Romuald/Desktop/Minecraft/SkyWars/src/plugin.yml</file>
             <file>file:/C:/Users/Romuald/Desktop/Minecraft/SkyWars/src/skywars/ScoreBoard.java</file>
+            <file>file:/C:/Users/Romuald/Desktop/Minecraft/SkyWars/src/chests_SkyBool1.yml</file>
             <file>file:/C:/Users/Romuald/Desktop/Minecraft/SkyWars/src/skywars/controller/WorldController.java</file>
+            <file>file:/C:/Users/Romuald/Desktop/Minecraft/SkyWars/src/spawn_TempleRun1.yml</file>
             <file>file:/C:/Users/Romuald/Desktop/Minecraft/SkyWars/src/skywars/SkyWars.java</file>
+            <file>file:/C:/Users/Romuald/Desktop/Minecraft/SkyWars/src/items.yml</file>
             <file>file:/C:/Users/Romuald/Desktop/Minecraft/SkyWars/src/skywars/listener/PlayerListener.java</file>
         </group>
     </open-files>

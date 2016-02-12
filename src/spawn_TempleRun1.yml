@@ -1,0 +1,8 @@
+spawn:
+    map: TempleRun1
+    position:
+        # Bulles
+        - -205 22 -625
+        - -205 22 -679
+        - -259 22 -679
+        - -259 22 -625
